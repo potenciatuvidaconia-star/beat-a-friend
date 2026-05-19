@@ -1,6 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import React from 'react'
 
 interface Match {
   id: string
@@ -107,7 +108,7 @@ export default async function MundialPage() {
   const totalGroupMatches = groupMatches.length
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F0F2F8', paddingBottom: 40 }}>
+    <div style={{ minHeight: '100vh', background: '#F0F2F8', paddingBottom: 96 }}>
 
       {/* ── HEADER ───────────────────────────────────────── */}
       <div style={{
@@ -340,6 +341,30 @@ export default async function MundialPage() {
           </p>
         </div>
       </div>
+
+      {/* ── BOTTOM NAV ───────────────────────────────────── */}
+      <nav style={{
+        position: 'fixed', bottom: 0, left: 0, right: 0,
+        background: 'rgba(255,255,255,.96)', backdropFilter: 'blur(12px)',
+        borderTop: '1px solid var(--bf-divider)',
+        padding: '8px 8px 26px', display: 'flex', justifyContent: 'space-around',
+      }}>
+        {([
+          { href: '/dashboard', label: 'Inicio', active: false, icon: <path d="M3 9.5L11 2l8 7.5V20a1 1 0 01-1 1H14v-5H8v5H4a1 1 0 01-1-1V9.5z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/> },
+          { href: '/dashboard', label: 'Ranking', active: false, icon: <path d="M7 17V9M11 17V5M15 17v-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/> },
+          { href: '/mundial', label: 'Mundial', active: true, icon: <><circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/><path d="M2 11h18M11 2C11 2 13.5 6 13.5 11S11 20 11 20" stroke="currentColor" strokeWidth="1.2"/></> },
+          { href: '/perfil', label: 'Perfil', active: false, icon: <><circle cx="11" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/><path d="M3 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></> },
+        ] as { href: string; label: string; active: boolean; icon: React.ReactNode }[]).map(tab => (
+          <Link key={tab.href + tab.label} href={tab.href} style={{
+            flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+            textDecoration: 'none', color: tab.active ? 'var(--bf-navy)' : 'var(--bf-text-3)',
+            padding: '4px 2px',
+          }}>
+            <svg width="22" height="22" viewBox="0 0 22 22" fill="none">{tab.icon}</svg>
+            <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: tab.active ? 800 : 600 }}>{tab.label}</span>
+          </Link>
+        ))}
+      </nav>
     </div>
   )
 }

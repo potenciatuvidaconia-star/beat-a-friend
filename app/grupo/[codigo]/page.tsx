@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatDeadline } from '@/lib/utils'
 import ShareButton from './ShareButton'
+import GroupChat from './GroupChat'
 
 export default async function GrupoPage({ params }: { params: Promise<{ codigo: string }> }) {
   const { codigo } = await params
@@ -38,6 +39,14 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
 
   const total = members?.length ?? 0
   const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/unirse/${codigo}`
+
+  // Fetch last 50 chat messages
+  const { data: initialMessages } = await supabase
+    .from('group_messages')
+    .select('*, profiles(display_name)')
+    .eq('group_id', group.id)
+    .order('created_at', { ascending: true })
+    .limit(50)
 
   const platformYappy = process.env.NEXT_PUBLIC_YAPPY_NUMBER ?? '507-XXXX-XXXX'
   const apodoPrimero: string = group.apodo_primero ?? 'El Profeta'
@@ -329,6 +338,13 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
           Ver partidos y predecir
         </Link>
 
+        {/* ── CHAT GRUPAL ───────────────────────────────── */}
+        <GroupChat
+          groupId={group.id}
+          currentUserId={user.id}
+          initialMessages={(initialMessages ?? []) as any}
+        />
+
         {/* ── TROFEO / DIPLOMA ──────────────────────────── */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
           <Link
@@ -396,8 +412,8 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
         {[
           { href: '/dashboard', label: 'Inicio', active: false, icon: <path d="M3 9.5L11 2l8 7.5V20a1 1 0 01-1 1H14v-5H8v5H4a1 1 0 01-1-1V9.5z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/> },
           { href: `/grupo/${codigo}`, label: 'Ranking', active: true, icon: <path d="M7 17V9M11 17V5M15 17v-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/> },
-          { href: `/grupo/${codigo}/predicciones`, label: 'Predecir', active: false, icon: <><circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/><path d="M7 11h8M11 7v8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></> },
           { href: '/mundial', label: 'Mundial', active: false, icon: <><circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/><path d="M2 11h18M11 2C11 2 13.5 6 13.5 11S11 20 11 20" stroke="currentColor" strokeWidth="1.2"/></> },
+          { href: '/perfil', label: 'Perfil', active: false, icon: <><circle cx="11" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/><path d="M3 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></> },
         ].map(tab => (
           <Link key={tab.href} href={tab.href} style={{
             flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
