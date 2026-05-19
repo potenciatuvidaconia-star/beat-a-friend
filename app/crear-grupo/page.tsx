@@ -29,7 +29,7 @@ export default function CrearGrupoPage() {
         apodo_ultimo: apodoUltimo || 'El Ciego',
         premio_castigo: premioCastigo || null })
       .select().single()
-    if (groupErr) { setError('Error creando el grupo. Intenta de nuevo.'); setLoading(false); return }
+    if (groupErr) { setError(`[${groupErr.code}] ${groupErr.message}`); setLoading(false); return }
     await supabase.from('group_members').insert({
       group_id: group.id, user_id: user.id, status: 'active', payment_status: 'confirmed'
     })
