@@ -86,22 +86,27 @@ export default function PrediccionesClient({
 
   if (matches.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 text-center px-6">
-        <div className="text-5xl mb-4">🕐</div>
-        <p className="font-bold text-lg">Los partidos aún no están cargados</p>
-        <p className="text-sm text-gray-400 mt-2">Vuelve pronto — el Mundial 2026 se acerca</p>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 24px', textAlign: 'center' }}>
+        <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'var(--bf-card-soft)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 16 }}>
+          <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+            <circle cx="14" cy="14" r="11" stroke="var(--bf-text-3)" strokeWidth="2"/>
+            <path d="M14 8v7l4 3" stroke="var(--bf-text-3)" strokeWidth="2" strokeLinecap="round"/>
+          </svg>
+        </div>
+        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 17 }}>Los partidos aún no están cargados</p>
+        <p style={{ fontSize: 13, color: 'var(--bf-text-3)', marginTop: 6 }}>Vuelve pronto — el Mundial 2026 se acerca</p>
       </div>
     )
   }
 
   return (
-    <div className="max-w-lg mx-auto px-4 pt-5 space-y-8">
+    <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 16px 40px', display: 'flex', flexDirection: 'column', gap: 28 }}>
       {stageOrder.filter(s => byStage[s]).map(stage => (
         <div key={stage}>
-          <h2 className="font-bold text-sm text-gray-400 uppercase tracking-wide mb-3">
+          <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: 'var(--bf-text-3)', letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 10 }}>
             {STAGE_LABELS[stage] ?? stage}
-          </h2>
-          <div className="space-y-3">
+          </p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
             {byStage[stage].map(match => (
               <MatchCard
                 key={match.id}
@@ -137,46 +142,49 @@ function MatchCard({
   const hasResult = match.status === 'finished' && match.home_score !== null
   const pts = prediction?.points_earned
 
+  const cardBorder = (pts !== null && pts !== undefined) ? 'var(--bf-green)' : locked ? 'var(--bf-divider)' : 'var(--bf-border)'
   return (
-    <div className={`bg-white rounded-2xl border p-4 ${
-      locked ? 'border-gray-100 opacity-80' : 'border-gray-200'
-    } ${pts !== null && pts !== undefined ? 'border-[#00C46A]' : ''}`}>
+    <div style={{
+      background: 'var(--bf-card)', borderRadius: 'var(--bf-r-md)',
+      border: `1.5px solid ${cardBorder}`,
+      padding: '14px 14px',
+      opacity: locked && !hasResult ? 0.75 : 1,
+      boxShadow: 'var(--bf-shadow-sm)',
+    }}>
       {/* Date & status */}
-      <div className="flex items-center justify-between mb-3">
-        <p className="text-xs text-gray-400">{dateStr} · {timeStr}</p>
-        <div className="flex items-center gap-2">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
+        <p style={{ fontSize: 11, color: 'var(--bf-text-3)' }}>{dateStr} · {timeStr}</p>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           {match.status === 'live' && (
-            <span className="text-[10px] bg-red-100 text-[#FF5C5C] px-2 py-0.5 rounded-full font-semibold animate-pulse">
-              EN VIVO
-            </span>
+            <span className="chip chip-live" style={{ fontSize: 10, padding: '3px 8px' }}>EN VIVO</span>
           )}
           {pts !== null && pts !== undefined && (
-            <span className="text-[10px] bg-green-100 text-[#00C46A] px-2 py-0.5 rounded-full font-bold">
+            <span style={{ fontSize: 10, background: 'var(--bf-green-soft)', color: 'var(--bf-green-dark)', padding: '3px 8px', borderRadius: 999, fontFamily: 'var(--font-display)', fontWeight: 700 }}>
               +{pts} pts
             </span>
           )}
-          {saving && <span className="text-[10px] text-gray-400">Guardando...</span>}
+          {saving && <span style={{ fontSize: 10, color: 'var(--bf-text-3)' }}>Guardando...</span>}
         </div>
       </div>
 
       {/* Teams */}
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2 flex-1">
-          <span className="text-2xl">{match.home_flag}</span>
-          <span className="font-bold text-sm">{match.home_team}</span>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1 }}>
+          <span style={{ fontSize: 22 }}>{match.home_flag}</span>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13 }}>{match.home_team}</span>
         </div>
 
         {hasResult ? (
-          <div className="px-3 py-1 bg-[#1A1A2E] text-white rounded-lg font-bold text-sm">
+          <div style={{ padding: '5px 12px', background: 'var(--bf-navy)', color: '#fff', borderRadius: 10, fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 14, flexShrink: 0 }}>
             {match.home_score} - {match.away_score}
           </div>
         ) : (
-          <span className="text-gray-300 font-bold">vs</span>
+          <span style={{ color: 'var(--bf-text-3)', fontWeight: 700, padding: '0 10px', flexShrink: 0 }}>vs</span>
         )}
 
-        <div className="flex items-center gap-2 flex-1 justify-end">
-          <span className="font-bold text-sm text-right">{match.away_team}</span>
-          <span className="text-2xl">{match.away_flag}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: 1, justifyContent: 'flex-end' }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textAlign: 'right' }}>{match.away_team}</span>
+          <span style={{ fontSize: 22 }}>{match.away_flag}</span>
         </div>
       </div>
 
@@ -198,17 +206,19 @@ function MatchCard({
       )}
 
       {locked && prediction && (
-        <div className="text-xs text-gray-400 text-center">
+        <p style={{ fontSize: 12, color: 'var(--bf-text-3)', textAlign: 'center' }}>
           Tu predicción:{' '}
-          {mode === 'basic'
-            ? <strong>{prediction.prediction}</strong>
-            : <strong>{prediction.home_pred ?? '?'} - {prediction.away_pred ?? '?'}</strong>
-          }
-        </div>
+          <strong style={{ color: 'var(--bf-text)' }}>
+            {mode === 'basic'
+              ? prediction.prediction
+              : `${prediction.home_pred ?? '?'} - ${prediction.away_pred ?? '?'}`
+            }
+          </strong>
+        </p>
       )}
 
       {locked && !prediction && (
-        <p className="text-xs text-gray-300 text-center">No predijiste este partido</p>
+        <p style={{ fontSize: 12, color: 'var(--bf-border)', textAlign: 'center' }}>No predijiste este partido</p>
       )}
     </div>
   )
@@ -224,18 +234,22 @@ function BasicPicker({ value, onChange, stage }: {
     : [{ v: '1', label: 'Local' }, { v: '2', label: 'Visitante' }]
 
   return (
-    <div className={`grid gap-2 ${stage === 'group' ? 'grid-cols-3' : 'grid-cols-2'}`}>
+    <div style={{ display: 'grid', gap: 8, gridTemplateColumns: stage === 'group' ? 'repeat(3,1fr)' : 'repeat(2,1fr)' }}>
       {options.map(opt => (
         <button
           key={opt.v}
           onClick={() => onChange(opt.v)}
-          className={`py-2.5 rounded-xl text-sm font-bold transition-all ${
-            value === opt.v
-              ? 'bg-[#00C46A] text-white'
-              : 'bg-gray-50 text-gray-600 border border-gray-200'
-          }`}
+          style={{
+            padding: '10px 4px', borderRadius: 12, cursor: 'pointer',
+            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13,
+            border: '1.5px solid',
+            borderColor: value === opt.v ? 'var(--bf-green)' : 'var(--bf-border)',
+            background: value === opt.v ? 'var(--bf-green)' : 'var(--bf-card-soft)',
+            color: value === opt.v ? '#fff' : 'var(--bf-text-2)',
+            transition: 'all .12s',
+          }}
         >
-          {opt.v === 'X' ? 'X' : opt.label}
+          {opt.label}
         </button>
       ))}
     </div>
@@ -259,25 +273,27 @@ function ProPicker({ home, away, onChange }: {
   }
 
   return (
-    <div className="flex items-center gap-3">
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
       <input
-        type="number"
-        min="0"
-        max="20"
-        value={h}
+        type="number" min="0" max="20" value={h}
         onChange={e => { setH(e.target.value); handleChange(e.target.value, a) }}
-        className="flex-1 text-center text-2xl font-bold py-2 rounded-xl border-2 border-gray-200 focus:border-[#00C46A] focus:outline-none"
         placeholder="0"
+        style={{
+          flex: 1, textAlign: 'center', fontSize: 24, fontFamily: 'var(--font-display)', fontWeight: 800,
+          padding: '8px', borderRadius: 12, border: '1.5px solid var(--bf-border)', outline: 'none',
+          background: 'var(--bf-card-soft)', color: 'var(--bf-text)',
+        }}
       />
-      <span className="text-gray-400 font-bold text-xl">-</span>
+      <span style={{ color: 'var(--bf-text-3)', fontWeight: 700, fontSize: 20 }}>-</span>
       <input
-        type="number"
-        min="0"
-        max="20"
-        value={a}
+        type="number" min="0" max="20" value={a}
         onChange={e => { setA(e.target.value); handleChange(h, e.target.value) }}
-        className="flex-1 text-center text-2xl font-bold py-2 rounded-xl border-2 border-gray-200 focus:border-[#00C46A] focus:outline-none"
         placeholder="0"
+        style={{
+          flex: 1, textAlign: 'center', fontSize: 24, fontFamily: 'var(--font-display)', fontWeight: 800,
+          padding: '8px', borderRadius: 12, border: '1.5px solid var(--bf-border)', outline: 'none',
+          background: 'var(--bf-card-soft)', color: 'var(--bf-text)',
+        }}
       />
     </div>
   )

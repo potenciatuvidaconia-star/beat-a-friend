@@ -23,54 +23,75 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-6"
-      style={{ background: 'linear-gradient(180deg, #FAFAFA 0%, #E6F9EF 100%)' }}>
-      <div className="w-full max-w-sm">
-        <div className="text-center mb-10">
-          <div className="relative inline-flex items-center justify-center mb-5">
-            <div style={{ width:96,height:96,borderRadius:'50%',background:'linear-gradient(135deg,#00C46A,#00A056)',display:'flex',alignItems:'center',justifyContent:'center',fontSize:48,boxShadow:'0 16px 40px rgba(0,196,106,.35)' }}>⚽</div>
-            <span style={{ position:'absolute',top:-6,right:-12,fontSize:26,transform:'rotate(18deg)' }}>👑</span>
-            <span style={{ position:'absolute',bottom:-2,left:-14,fontSize:22,transform:'rotate(-12deg)' }}>💀</span>
-          </div>
-          <h1 style={{ fontFamily:'var(--font-display)',fontSize:38,fontWeight:600,letterSpacing:'-0.03em',lineHeight:1 }}>
-            Beat<span style={{ color:'var(--bf-green)' }}>·</span>a<span style={{ color:'var(--bf-green)' }}>·</span>Friend
-          </h1>
-          <p style={{ color:'var(--bf-text-2)',fontSize:15,marginTop:10,lineHeight:1.45 }}>
-            Humilla a tus amigos prediciendo el Mundial 2026.
+    <div className="min-h-screen flex flex-col" style={{ background: 'var(--bf-bg)' }}>
+
+      {/* FIFA-style top stripe */}
+      <div className="stripe-navy" style={{ padding: '28px 24px 32px' }}>
+        <div style={{ maxWidth: 420, margin: '0 auto' }}>
+          {/* Top label */}
+          <p style={{
+            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 11,
+            letterSpacing: '.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,.55)',
+            marginBottom: 10,
+          }}>
+            Mundial 2026 · Quiniela
           </p>
-          <div style={{ display:'flex',gap:8,marginTop:12,justifyContent:'center',flexWrap:'wrap' }}>
-            <span className="chip">⚡ 60s para entrar</span>
-            <span className="chip">💵 $1 por grupo</span>
+
+          {/* Wordmark */}
+          <h1 className="display-heading display-xl" style={{ color: '#fff' }}>
+            Beat<span style={{ color: 'var(--bf-green)' }}>·</span>a<span style={{ color: 'var(--bf-green)' }}>·</span>Friend
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,.65)', fontSize: 14, marginTop: 8, fontFamily: 'var(--font-display)' }}>
+            Predice, compite y humilla a tus amigos.
+          </p>
+
+          {/* Info pills */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
+            <span className="badge badge-green">Registro en 60 seg</span>
+            <span className="badge" style={{ background: 'rgba(255,255,255,.12)', color: '#fff' }}>$1 por grupo</span>
+            <span className="badge" style={{ background: 'rgba(255,255,255,.12)', color: '#fff' }}>Mundial 2026</span>
           </div>
         </div>
+      </div>
 
-        <form onSubmit={handleSubmit} style={{ display:'flex',flexDirection:'column',gap:12 }}>
-          <div>
-            <label className="input-label">Email</label>
-            <input className="input" type="email" placeholder="tu@email.com"
-              value={email} onChange={e => setEmail(e.target.value)} required />
-          </div>
-          <div>
-            <label className="input-label">Contraseña</label>
-            <input className="input" type="password" placeholder="••••••••"
-              value={password} onChange={e => setPassword(e.target.value)} required />
-          </div>
-          {error && (
-            <div style={{ background:'var(--bf-coral-soft)',borderRadius:'var(--bf-r-md)',padding:'10px 14px' }}>
-              <p style={{ color:'var(--bf-coral-dark)',fontSize:13,fontWeight:600 }}>⚠️ {error}</p>
+      {/* Form card */}
+      <div style={{ flex: 1, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', padding: '0 20px 40px' }}>
+        <div style={{ width: '100%', maxWidth: 420, background: 'var(--bf-card)', borderRadius: '0 0 var(--bf-r-xl) var(--bf-r-xl)', boxShadow: 'var(--bf-shadow-lg)', padding: '28px 24px 32px', marginTop: 0 }}>
+          <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, marginBottom: 20 }}>
+            Ingresa a tu cuenta
+          </p>
+
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            <div>
+              <label className="input-label">Email</label>
+              <input className="input" type="email" placeholder="tu@email.com"
+                value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
-          )}
-          <button type="submit" className="btn btn-primary" disabled={loading} style={{ marginTop:4 }}>
-            {loading ? 'Entrando...' : 'Entrar al campo ⚽'}
-          </button>
-        </form>
+            <div>
+              <label className="input-label">Contraseña</label>
+              <input className="input" type="password" placeholder="••••••••"
+                value={password} onChange={e => setPassword(e.target.value)} required />
+            </div>
 
-        <p style={{ textAlign:'center',fontSize:14,color:'var(--bf-text-2)',marginTop:20 }}>
-          ¿Primera vez?{' '}
-          <Link href="/register" style={{ color:'var(--bf-green)',fontWeight:700,fontFamily:'var(--font-display)' }}>
-            Crear cuenta
-          </Link>
-        </p>
+            {error && (
+              <div style={{ background: 'var(--bf-coral-soft)', borderRadius: 'var(--bf-r-md)', padding: '10px 14px', display: 'flex', gap: 8, alignItems: 'center' }}>
+                <span style={{ width: 18, height: 18, borderRadius: '50%', background: 'var(--bf-coral)', color: '#fff', fontSize: 11, fontWeight: 800, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>!</span>
+                <p style={{ color: 'var(--bf-coral-dark)', fontSize: 13, fontWeight: 600 }}>{error}</p>
+              </div>
+            )}
+
+            <button type="submit" className="btn btn-primary" disabled={loading} style={{ marginTop: 4 }}>
+              {loading ? 'Ingresando...' : 'Entrar →'}
+            </button>
+          </form>
+
+          <p style={{ textAlign: 'center', fontSize: 14, color: 'var(--bf-text-2)', marginTop: 20 }}>
+            Primera vez?{' '}
+            <Link href="/register" style={{ color: 'var(--bf-navy)', fontWeight: 700, fontFamily: 'var(--font-display)' }}>
+              Crear cuenta
+            </Link>
+          </p>
+        </div>
       </div>
     </div>
   )

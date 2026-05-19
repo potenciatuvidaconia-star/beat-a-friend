@@ -2,29 +2,48 @@
 
 /* ── Design tokens ─────────────────────────────────────── */
 :root {
+  /* ── Brand greens (scoring, success) */
   --bf-green:        #00C46A;
   --bf-green-dark:   #00A056;
   --bf-green-soft:   #E6F9EF;
   --bf-green-press:  #008C4A;
+
+  /* ── FIFA navy (primary brand) */
+  --bf-navy:         #001F5B;
+  --bf-navy-dark:    #001040;
+  --bf-navy-soft:    #E8EEF9;
+
+  /* ── Red (shame, warnings, last place) */
   --bf-coral:        #FF5C5C;
   --bf-coral-dark:   #E03E3E;
   --bf-coral-soft:   #FFECEC;
+  --bf-red:          #CE1126;
+  --bf-red-dark:     #A50E1E;
+
+  /* ── Gold (champion, first place) */
   --bf-gold:         #FFBA00;
   --bf-gold-dark:    #E6A300;
   --bf-gold-soft:    #FFF6DC;
+
+  /* ── Neutrals */
   --bf-text:         #1A1A2E;
   --bf-text-2:       #5E5E78;
   --bf-text-3:       #9695AA;
-  --bf-bg:           #FAFAFA;
+  --bf-bg:           #F7F8FC;
   --bf-card:         #FFFFFF;
   --bf-card-soft:    #F4F4F7;
   --bf-border:       #ECECEF;
   --bf-divider:      #F0F0F3;
+
+  /* ── Shadows */
   --bf-shadow-sm:    0 1px 2px rgba(26,26,46,.04), 0 1px 4px rgba(26,26,46,.04);
   --bf-shadow-md:    0 4px 12px rgba(26,26,46,.06), 0 1px 3px rgba(26,26,46,.04);
   --bf-shadow-lg:    0 12px 32px rgba(26,26,46,.08), 0 4px 12px rgba(26,26,46,.06);
   --bf-shadow-green: 0 8px 24px rgba(0,196,106,.32);
   --bf-shadow-gold:  0 8px 24px rgba(255,186,0,.32);
+  --bf-shadow-navy:  0 8px 24px rgba(0,31,91,.28);
+
+  /* ── Radii */
   --bf-r-sm: 10px;
   --bf-r-md: 16px;
   --bf-r-lg: 22px;
@@ -55,6 +74,8 @@ button { font-family: inherit; cursor: pointer; }
 }
 .btn:active { transform: translateY(2px); }
 .btn-primary { background: var(--bf-green); color: #fff; box-shadow: 0 4px 0 var(--bf-green-press), var(--bf-shadow-green); }
+.btn-navy { background: var(--bf-navy); color: #fff; box-shadow: 0 4px 0 var(--bf-navy-dark), var(--bf-shadow-navy); }
+.btn-navy:active { box-shadow: 0 2px 0 var(--bf-navy-dark); }
 .btn-primary:active { box-shadow: 0 2px 0 var(--bf-green-press); }
 .btn-primary:disabled { opacity: .55; cursor: not-allowed; transform: none; }
 .btn-gold { background: var(--bf-gold); color: var(--bf-text); box-shadow: 0 4px 0 var(--bf-gold-dark), var(--bf-shadow-gold); }
@@ -93,8 +114,37 @@ button { font-family: inherit; cursor: pointer; }
 .chip-green { background: var(--bf-green-soft); color: var(--bf-green-dark); }
 .chip-coral { background: var(--bf-coral-soft); color: var(--bf-coral-dark); }
 .chip-gold  { background: var(--bf-gold-soft);  color: #8a6300; }
+.chip-navy  { background: var(--bf-navy-soft); color: var(--bf-navy); }
 .chip-live  { background: #FFEEEE; color: var(--bf-coral-dark); }
 .chip-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--bf-coral); display: inline-block; animation: bf-pulse 1.2s infinite; }
+
+/* ── FIFA-style display headings ────────────────────────── */
+.display-heading {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+.display-xl  { font-size: clamp(36px, 8vw, 48px); }
+.display-lg  { font-size: clamp(26px, 6vw, 34px); }
+.display-md  { font-size: clamp(20px, 4vw, 24px); }
+
+/* ── Badge / pill ────────────────────────────────────────── */
+.badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-display); font-weight: 700; font-size: 11px;
+  letter-spacing: .06em; text-transform: uppercase;
+  padding: 3px 9px; border-radius: 999px;
+}
+.badge-green  { background: var(--bf-green-soft);  color: var(--bf-green-dark); }
+.badge-navy   { background: var(--bf-navy-soft);   color: var(--bf-navy); }
+.badge-gold   { background: var(--bf-gold-soft);   color: var(--bf-gold-dark); }
+.badge-coral  { background: var(--bf-coral-soft);  color: var(--bf-coral-dark); }
+.badge-warning { background: #FFF3CD; color: #7B5800; }
+
+/* ── Stripe accent ───────────────────────────────────────── */
+.stripe-navy { background: linear-gradient(135deg, var(--bf-navy) 0%, #003087 100%); }
+.stripe-green { background: linear-gradient(135deg, var(--bf-green) 0%, var(--bf-green-dark) 100%); }
 
 /* ── Tab bar ─────────────────────────────────────────────── */
 .tabbar { display: flex; background: var(--bf-card); border-top: 1px solid var(--bf-divider); padding: 8px 8px 28px; gap: 4px; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; }

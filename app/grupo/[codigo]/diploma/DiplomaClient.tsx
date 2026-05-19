@@ -15,7 +15,7 @@ export default function DiplomaClient({ groupName, apodoUltimo, premioCastigo, p
   const diplomaRef = useRef<HTMLDivElement>(null)
 
   function share() {
-    const text = `🏆 Recibí el diploma oficial de "${apodoUltimo}" en la quiniela ${groupName} del Mundial 2026 con solo ${points} puntos. 😭\n#BeatAFriend #Mundial2026`
+    const text = `Recibí el diploma oficial de "${apodoUltimo}" en la quiniela ${groupName} del Mundial 2026 con solo ${points} puntos.\n#BeatAFriend #Mundial2026`
     if (navigator.share) {
       navigator.share({ title: 'Mi Diploma de Vergüenza', text })
     } else {
@@ -25,83 +25,115 @@ export default function DiplomaClient({ groupName, apodoUltimo, premioCastigo, p
   }
 
   return (
-    <div className="min-h-screen bg-[#1A1A2E] flex flex-col items-center justify-center p-6">
+    <div style={{ minHeight: '100vh', background: 'var(--bf-navy)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
       {/* Diploma */}
       <div
         ref={diplomaRef}
-        className="w-full max-w-sm bg-white rounded-3xl overflow-hidden shadow-2xl"
+        style={{ width: '100%', maxWidth: 360, background: '#fff', borderRadius: 28, overflow: 'hidden', boxShadow: '0 24px 64px rgba(0,0,0,.4)' }}
       >
-        {/* Header rojo de vergüenza */}
-        <div className="bg-[#FF5C5C] px-6 py-5 text-center">
-          <p className="text-white text-xs font-bold uppercase tracking-widest mb-1">
+        {/* Header */}
+        <div style={{ background: 'var(--bf-coral)', padding: '22px 24px', textAlign: 'center' }}>
+          <p style={{ color: 'rgba(255,255,255,.7)', fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '.14em', textTransform: 'uppercase', marginBottom: 6 }}>
             Certificado Oficial de
           </p>
-          <p className="text-white text-3xl font-black">VERGÜENZA</p>
-          <p className="text-white/80 text-xs mt-1">Mundial 2026 · Beat-a-Friend</p>
+          <p style={{ color: '#fff', fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 32, letterSpacing: '-0.02em', lineHeight: 1 }}>
+            VERGÜENZA
+          </p>
+          <p style={{ color: 'rgba(255,255,255,.6)', fontSize: 11, marginTop: 6, fontFamily: 'var(--font-display)' }}>
+            Mundial 2026 · Beat-a-Friend
+          </p>
         </div>
 
-        {/* Contenido */}
-        <div className="px-6 py-6 text-center space-y-4">
-          <div className="text-6xl">🤦</div>
+        {/* Body */}
+        <div style={{ padding: '28px 24px', textAlign: 'center', display: 'flex', flexDirection: 'column', gap: 16 }}>
+
+          {/* Shame icon — large X circle */}
+          <div style={{
+            width: 72, height: 72, borderRadius: '50%', background: 'var(--bf-coral-soft)',
+            margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+              <path d="M10 10l12 12M22 10L10 22" stroke="var(--bf-coral)" strokeWidth="3" strokeLinecap="round"/>
+            </svg>
+          </div>
 
           <div>
-            <p className="text-gray-400 text-xs uppercase tracking-wide">Se certifica que</p>
-            <p className="text-2xl font-black text-[#1A1A2E] mt-1">{playerName}</p>
-            <p className="text-[#FF5C5C] font-bold text-lg mt-1">
+            <p style={{ fontSize: 11, color: 'var(--bf-text-3)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase' }}>
+              Se certifica que
+            </p>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 26, color: 'var(--bf-text)', marginTop: 4, letterSpacing: '-0.02em' }}>
+              {playerName}
+            </p>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 18, color: 'var(--bf-coral)', marginTop: 2 }}>
               "{apodoUltimo}"
             </p>
           </div>
 
-          <div className="bg-red-50 rounded-2xl px-4 py-3">
-            <p className="text-gray-500 text-xs">terminó en último lugar del grupo</p>
-            <p className="font-black text-2xl text-[#FF5C5C] mt-1">{groupName}</p>
-            <p className="text-gray-400 text-xs mt-1">con solo</p>
-            <p className="font-black text-3xl text-[#1A1A2E]">{points} puntos</p>
+          <div style={{ background: 'var(--bf-coral-soft)', borderRadius: 16, padding: '14px 16px' }}>
+            <p style={{ fontSize: 12, color: 'var(--bf-text-3)' }}>terminó en último lugar del grupo</p>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, color: 'var(--bf-coral)', marginTop: 4 }}>{groupName}</p>
+            <p style={{ fontSize: 12, color: 'var(--bf-text-3)', marginTop: 4 }}>con solo</p>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 36, color: 'var(--bf-text)', lineHeight: 1.1 }}>{points}</p>
+            <p style={{ fontSize: 12, color: 'var(--bf-text-3)' }}>puntos</p>
           </div>
 
           {premioCastigo && (
-            <div className="border-2 border-dashed border-[#FF5C5C] rounded-2xl px-4 py-3">
-              <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold mb-1">Su castigo</p>
-              <p className="font-bold text-[#1A1A2E] text-sm">{premioCastigo}</p>
+            <div style={{ border: '2px dashed var(--bf-coral)', borderRadius: 14, padding: '12px 16px' }}>
+              <p style={{ fontSize: 10, color: 'var(--bf-text-3)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase', marginBottom: 4 }}>
+                Su castigo
+              </p>
+              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--bf-text)' }}>{premioCastigo}</p>
             </div>
           )}
 
-          {/* Sello */}
-          <div className="flex items-center justify-center gap-2 pt-2">
-            <div className="h-px flex-1 bg-gray-200" />
-            <p className="text-[10px] text-gray-300 font-mono">beat-a-friend.vercel.app</p>
-            <div className="h-px flex-1 bg-gray-200" />
+          {/* Seal */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, paddingTop: 4 }}>
+            <div style={{ flex: 1, height: 1, background: 'var(--bf-divider)' }} />
+            <p style={{ fontSize: 10, color: 'var(--bf-text-3)', fontFamily: 'monospace' }}>beat-a-friend.vercel.app</p>
+            <div style={{ flex: 1, height: 1, background: 'var(--bf-divider)' }} />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="bg-[#FF5C5C]/10 px-6 py-3 text-center">
-          <p className="text-[10px] text-[#FF5C5C] font-semibold">
-            🏆 Mundial 2026 · Diploma válido en todos los grupos de WhatsApp
+        <div style={{ background: 'var(--bf-coral-soft)', padding: '10px 16px', textAlign: 'center' }}>
+          <p style={{ fontSize: 10, color: 'var(--bf-coral-dark)', fontFamily: 'var(--font-display)', fontWeight: 600 }}>
+            Mundial 2026 · Diploma válido en todos los grupos de WhatsApp
           </p>
         </div>
       </div>
 
-      {/* Acciones */}
-      <div className="mt-6 w-full max-w-sm space-y-3">
+      {/* Actions */}
+      <div style={{ marginTop: 20, width: '100%', maxWidth: 360, display: 'flex', flexDirection: 'column', gap: 10 }}>
         <button
           onClick={share}
-          className="w-full py-4 rounded-2xl bg-[#FF5C5C] text-white font-bold flex items-center justify-center gap-2"
+          style={{
+            width: '100%', padding: '16px', borderRadius: 18,
+            background: 'var(--bf-coral)', color: '#fff', border: 'none', cursor: 'pointer',
+            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
+          }}
         >
-          <span>📤</span>
+          <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M9 2v10M5 6l4-4 4 4" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M2 13v1a2 2 0 002 2h10a2 2 0 002-2v-1" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
+          </svg>
           {isMe ? 'Compartir mi vergüenza' : 'Compartir el diploma'}
         </button>
         <button
           onClick={() => window.history.back()}
-          className="w-full py-3 rounded-2xl bg-white/10 text-white text-sm"
+          style={{
+            width: '100%', padding: '12px', borderRadius: 18,
+            background: 'rgba(255,255,255,.1)', color: '#fff', border: 'none', cursor: 'pointer',
+            fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 14,
+          }}
         >
-          ← Volver al grupo
+          Volver al grupo
         </button>
       </div>
 
       {isMe && (
-        <p className="text-white/40 text-xs text-center mt-4 max-w-xs">
-          La próxima vez estudia algo de fútbol antes de apostarlo todo 🙃
+        <p style={{ color: 'rgba(255,255,255,.3)', fontSize: 12, textAlign: 'center', marginTop: 16, maxWidth: 280 }}>
+          La próxima vez estudia algo de fútbol antes de apostarlo todo.
         </p>
       )}
     </div>
