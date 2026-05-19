@@ -389,36 +389,25 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
       {/* ── BOTTOM NAV ───────────────────────────────────── */}
       <nav style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: 'rgba(255,255,255,.95)', backdropFilter: 'blur(12px)',
+        background: 'rgba(255,255,255,.96)', backdropFilter: 'blur(12px)',
         borderTop: '1px solid var(--bf-divider)',
-        padding: '10px 24px 28px', display: 'flex', justifyContent: 'space-around',
+        padding: '8px 8px 26px', display: 'flex', justifyContent: 'space-around',
       }}>
-        <Link href="/dashboard" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', color: 'var(--bf-text-3)' }}>
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-            <path d="M3 9.5L11 2l8 7.5V20a1 1 0 01-1 1H14v-5H8v5H4a1 1 0 01-1-1V9.5z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/>
-          </svg>
-          <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 600 }}>Inicio</span>
-        </Link>
-        <Link href={`/grupo/${codigo}`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', color: 'var(--bf-navy)' }}>
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-            <path d="M7 17V9M11 17V5M15 17v-5" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"/>
-          </svg>
-          <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 800 }}>Ranking</span>
-        </Link>
-        <Link href={`/grupo/${codigo}/predicciones`} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', color: 'var(--bf-text-3)' }}>
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-            <circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/>
-            <path d="M7 11h8M11 7v8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
-          </svg>
-          <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 600 }}>Predecir</span>
-        </Link>
-        <Link href="/mundial" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', color: 'var(--bf-text-3)' }}>
-          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-            <circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/>
-            <path d="M2 11h18M11 2C11 2 14 6 14 11s-3 9-3 9" stroke="currentColor" strokeWidth="1.3"/>
-          </svg>
-          <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 600 }}>Mundial</span>
-        </Link>
+        {[
+          { href: '/dashboard', label: 'Inicio', active: false, icon: <path d="M3 9.5L11 2l8 7.5V20a1 1 0 01-1 1H14v-5H8v5H4a1 1 0 01-1-1V9.5z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/> },
+          { href: `/grupo/${codigo}`, label: 'Ranking', active: true, icon: <path d="M7 17V9M11 17V5M15 17v-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/> },
+          { href: `/grupo/${codigo}/predicciones`, label: 'Predecir', active: false, icon: <><circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/><path d="M7 11h8M11 7v8" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></> },
+          { href: '/mundial', label: 'Mundial', active: false, icon: <><circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/><path d="M2 11h18M11 2C11 2 13.5 6 13.5 11S11 20 11 20" stroke="currentColor" strokeWidth="1.2"/></> },
+        ].map(tab => (
+          <Link key={tab.href} href={tab.href} style={{
+            flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
+            textDecoration: 'none', color: tab.active ? 'var(--bf-navy)' : 'var(--bf-text-3)',
+            padding: '4px 2px',
+          }}>
+            <svg width="20" height="20" viewBox="0 0 22 22" fill="none">{tab.icon}</svg>
+            <span style={{ fontSize: 9, fontFamily: 'var(--font-display)', fontWeight: tab.active ? 800 : 600 }}>{tab.label}</span>
+          </Link>
+        ))}
       </nav>
     </div>
   )

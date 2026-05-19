@@ -204,7 +204,7 @@ export default async function DashboardPage() {
           </svg>
           <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 600 }}>Mundial</span>
         </Link>
-        <Link href="/dashboard" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', color: 'var(--bf-text-3)' }}>
+        <Link href="/perfil" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', color: 'var(--bf-text-3)' }}>
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
             <circle cx="11" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/>
             <path d="M3 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
