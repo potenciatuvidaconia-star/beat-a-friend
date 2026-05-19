@@ -1,16 +1,110 @@
 @import "tailwindcss";
 
+/* ── Design tokens ─────────────────────────────────────── */
 :root {
-  --verde: #00C46A;
-  --rojo: #FF5C5C;
-  --dorado: #FFBA00;
-  --oscuro: #1A1A2E;
-  --fondo: #FAFAFA;
+  --bf-green:        #00C46A;
+  --bf-green-dark:   #00A056;
+  --bf-green-soft:   #E6F9EF;
+  --bf-green-press:  #008C4A;
+  --bf-coral:        #FF5C5C;
+  --bf-coral-dark:   #E03E3E;
+  --bf-coral-soft:   #FFECEC;
+  --bf-gold:         #FFBA00;
+  --bf-gold-dark:    #E6A300;
+  --bf-gold-soft:    #FFF6DC;
+  --bf-text:         #1A1A2E;
+  --bf-text-2:       #5E5E78;
+  --bf-text-3:       #9695AA;
+  --bf-bg:           #FAFAFA;
+  --bf-card:         #FFFFFF;
+  --bf-card-soft:    #F4F4F7;
+  --bf-border:       #ECECEF;
+  --bf-divider:      #F0F0F3;
+  --bf-shadow-sm:    0 1px 2px rgba(26,26,46,.04), 0 1px 4px rgba(26,26,46,.04);
+  --bf-shadow-md:    0 4px 12px rgba(26,26,46,.06), 0 1px 3px rgba(26,26,46,.04);
+  --bf-shadow-lg:    0 12px 32px rgba(26,26,46,.08), 0 4px 12px rgba(26,26,46,.06);
+  --bf-shadow-green: 0 8px 24px rgba(0,196,106,.32);
+  --bf-shadow-gold:  0 8px 24px rgba(255,186,0,.32);
+  --bf-r-sm: 10px;
+  --bf-r-md: 16px;
+  --bf-r-lg: 22px;
+  --bf-r-xl: 28px;
 }
 
-body {
-  background: var(--fondo);
-  color: var(--oscuro);
-  font-family: 'Inter', Arial, sans-serif;
-  -webkit-tap-highlight-color: transparent;
+/* ── Fonts ─────────────────────────────────────────────── */
+@theme {
+  --font-body:    var(--font-inter), "DM Sans", system-ui, sans-serif;
+  --font-display: var(--font-fredoka), "Nunito", system-ui, sans-serif;
 }
+
+/* ── Base ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-tap-highlight-color: transparent; }
+body { font-family: var(--font-body); background: var(--bf-bg); color: var(--bf-text); -webkit-font-smoothing: antialiased; }
+h1,h2,h3,h4 { font-family: var(--font-display); letter-spacing: -0.01em; margin: 0; }
+p { margin: 0; }
+button { font-family: inherit; cursor: pointer; }
+
+/* ── Buttons ───────────────────────────────────────────── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  font-family: var(--font-display); font-weight: 600; font-size: 16px;
+  border-radius: 999px; padding: 14px 22px; min-height: 52px;
+  border: none; cursor: pointer; width: 100%;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.btn:active { transform: translateY(2px); }
+.btn-primary { background: var(--bf-green); color: #fff; box-shadow: 0 4px 0 var(--bf-green-press), var(--bf-shadow-green); }
+.btn-primary:active { box-shadow: 0 2px 0 var(--bf-green-press); }
+.btn-primary:disabled { opacity: .55; cursor: not-allowed; transform: none; }
+.btn-gold { background: var(--bf-gold); color: var(--bf-text); box-shadow: 0 4px 0 var(--bf-gold-dark), var(--bf-shadow-gold); }
+.btn-gold:active { box-shadow: 0 2px 0 var(--bf-gold-dark); }
+.btn-secondary { background: var(--bf-card); color: var(--bf-text); border: 1.5px solid var(--bf-border); box-shadow: 0 2px 0 var(--bf-border); }
+.btn-dark { background: var(--bf-text); color: #fff; box-shadow: 0 4px 0 #0d0d1f; }
+.btn-dark:active { box-shadow: 0 2px 0 #0d0d1f; }
+.btn-coral { background: var(--bf-coral); color: #fff; box-shadow: 0 4px 0 var(--bf-coral-dark); }
+
+/* ── Cards ──────────────────────────────────────────────── */
+.card { background: var(--bf-card); border-radius: var(--bf-r-lg); box-shadow: var(--bf-shadow-md); }
+
+/* ── Input ──────────────────────────────────────────────── */
+.input {
+  width: 100%; background: var(--bf-card); border-radius: var(--bf-r-md);
+  padding: 14px 16px; font-size: 16px; font-family: var(--font-display);
+  font-weight: 500; color: var(--bf-text); border: 1.5px solid var(--bf-border);
+  box-shadow: var(--bf-shadow-sm); outline: none;
+  transition: border-color .15s, box-shadow .15s;
+}
+.input:focus { border-color: var(--bf-green); box-shadow: 0 0 0 3px var(--bf-green-soft); }
+.input::placeholder { color: var(--bf-text-3); }
+.input-label {
+  display: block; font-family: var(--font-display); font-size: 12px;
+  font-weight: 700; color: var(--bf-text-2); letter-spacing: .05em;
+  text-transform: uppercase; margin-bottom: 8px;
+}
+
+/* ── Chips ──────────────────────────────────────────────── */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-display); font-weight: 600; font-size: 12px;
+  padding: 5px 10px; border-radius: 999px;
+  background: var(--bf-card-soft); color: var(--bf-text-2);
+}
+.chip-green { background: var(--bf-green-soft); color: var(--bf-green-dark); }
+.chip-coral { background: var(--bf-coral-soft); color: var(--bf-coral-dark); }
+.chip-gold  { background: var(--bf-gold-soft);  color: #8a6300; }
+.chip-live  { background: #FFEEEE; color: var(--bf-coral-dark); }
+.chip-live::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--bf-coral); display: inline-block; animation: bf-pulse 1.2s infinite; }
+
+/* ── Tab bar ─────────────────────────────────────────────── */
+.tabbar { display: flex; background: var(--bf-card); border-top: 1px solid var(--bf-divider); padding: 8px 8px 28px; gap: 4px; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; }
+.tab { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 4px; font-family: var(--font-display); font-size: 10px; font-weight: 600; color: var(--bf-text-3); text-decoration: none; border-radius: var(--bf-r-sm); transition: color .15s; }
+.tab.active { color: var(--bf-green); }
+
+/* ── Section label ──────────────────────────────────────── */
+.section-label { font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--bf-text-3); letter-spacing: .08em; text-transform: uppercase; }
+
+/* ── Animations ─────────────────────────────────────────── */
+@keyframes bf-pulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .4; transform: scale(1.4); } }
+@keyframes bounce-in { 0% { transform: scale(.8); opacity: 0; } 70% { transform: scale(1.06); } 100% { transform: scale(1); opacity: 1; } }
+.animate-bounce-in { animation: bounce-in .35s ease forwards; }
