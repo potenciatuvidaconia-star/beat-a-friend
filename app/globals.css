@@ -143,8 +143,20 @@ button { font-family: inherit; cursor: pointer; }
 .badge-warning { background: #FFF3CD; color: #7B5800; }
 
 /* ── Stripe accent ───────────────────────────────────────── */
-.stripe-navy { background: linear-gradient(135deg, var(--bf-navy) 0%, #003087 100%); }
+.stripe-navy {
+  background: linear-gradient(145deg, #001040 0%, #001F5B 55%, #002D80 100%);
+  position: relative;
+  overflow: hidden;
+}
 .stripe-green { background: linear-gradient(135deg, var(--bf-green) 0%, var(--bf-green-dark) 100%); }
+
+/* ── Hero diamond net texture (goal net / football feel) ─── */
+.hero-texture {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(60deg,  rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px, transparent 1px, transparent 22px),
+    repeating-linear-gradient(-60deg, rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px, transparent 1px, transparent 22px);
+}
 
 /* ── Tab bar ─────────────────────────────────────────────── */
 .tabbar { display: flex; background: var(--bf-card); border-top: 1px solid var(--bf-divider); padding: 8px 8px 28px; gap: 4px; position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; }

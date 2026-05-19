@@ -4,6 +4,8 @@ import Link from 'next/link'
 import { formatDeadline } from '@/lib/utils'
 import ShareButton from './ShareButton'
 import GroupChat from './GroupChat'
+import HeroBall from '@/app/components/HeroBall'
+import Wordmark from '@/app/components/Wordmark'
 
 export default async function GrupoPage({ params }: { params: Promise<{ codigo: string }> }) {
   const { codigo } = await params
@@ -59,23 +61,24 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
       {/* ── HERO HEADER ─────────────────────────────────── */}
       <div style={{
         background: 'linear-gradient(145deg, #001040 0%, #001F5B 55%, #002D80 100%)',
-        padding: '0 0 0 0',
-        position: 'relative',
-        overflow: 'hidden',
+        position: 'relative', overflow: 'hidden',
       }}>
-        {/* Decorative diagonal stripes */}
-        <div style={{
-          position: 'absolute', inset: 0, opacity: .06,
-          backgroundImage: 'repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 24px)',
-        }} />
-        {/* Top accent bar — tricolor */}
         <div style={{ display: 'flex', height: 4 }}>
           <div style={{ flex: 1, background: '#CE1126' }} />
           <div style={{ flex: 1, background: '#fff' }} />
           <div style={{ flex: 1, background: '#00C46A' }} />
         </div>
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage: 'repeating-linear-gradient(60deg, rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px, transparent 1px, transparent 22px), repeating-linear-gradient(-60deg, rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px, transparent 1px, transparent 22px)',
+        }} />
+        <HeroBall size={220} opacity={0.06} />
 
-        <div style={{ maxWidth: 480, margin: '0 auto', padding: '20px 20px 24px', position: 'relative' }}>
+        <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 20px 24px', position: 'relative' }}>
+          {/* Wordmark */}
+          <div style={{ marginBottom: 14 }}>
+            <Wordmark center={false} />
+          </div>
           {/* Top row */}
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 16 }}>
             <div style={{ flex: 1 }}>

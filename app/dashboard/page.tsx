@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
+import HeroBall from '@/app/components/HeroBall'
+import Wordmark from '@/app/components/Wordmark'
 
 function daysUntilWorldCup(): number {
   const wc = new Date('2026-06-11T00:00:00Z')
@@ -121,17 +123,24 @@ export default async function DashboardPage() {
         background: 'linear-gradient(145deg, #001040 0%, #001F5B 55%, #002D80 100%)',
         position: 'relative', overflow: 'hidden',
       }}>
-        <div style={{
-          position: 'absolute', inset: 0, opacity: .05,
-          backgroundImage: 'repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 24px)',
-        }} />
         <div style={{ display: 'flex', height: 4 }}>
           <div style={{ flex: 1, background: '#CE1126' }} />
           <div style={{ flex: 1, background: '#fff' }} />
           <div style={{ flex: 1, background: '#00C46A' }} />
         </div>
+        {/* Diamond net texture */}
+        <div style={{
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage: 'repeating-linear-gradient(60deg, rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px, transparent 1px, transparent 22px), repeating-linear-gradient(-60deg, rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px, transparent 1px, transparent 22px)',
+        }} />
+        <HeroBall size={210} opacity={0.07} />
 
-        <div style={{ maxWidth: 480, margin: '0 auto', padding: '18px 20px 24px', position: 'relative' }}>
+        <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 20px 24px', position: 'relative' }}>
+          {/* Wordmark */}
+          <div style={{ marginBottom: 16 }}>
+            <Wordmark center={false} />
+          </div>
+
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
             <div>
               <p style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase' }}>

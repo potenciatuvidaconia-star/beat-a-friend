@@ -2,6 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import LogoutButton from './LogoutButton'
+import HeroBall from '@/app/components/HeroBall'
+import Wordmark from '@/app/components/Wordmark'
 
 export default async function PerfilPage() {
   const supabase = await createClient()
@@ -55,16 +57,21 @@ export default async function PerfilPage() {
         position: 'relative', overflow: 'hidden',
       }}>
         <div style={{
-          position: 'absolute', inset: 0, opacity: .05,
-          backgroundImage: 'repeating-linear-gradient(45deg, #fff 0px, #fff 1px, transparent 1px, transparent 24px)',
+          position: 'absolute', inset: 0, pointerEvents: 'none',
+          backgroundImage: 'repeating-linear-gradient(60deg, rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px, transparent 1px, transparent 22px), repeating-linear-gradient(-60deg, rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px, transparent 1px, transparent 22px)',
         }} />
+        <HeroBall size={200} opacity={0.07} />
         <div style={{ display: 'flex', height: 4 }}>
           <div style={{ flex: 1, background: '#CE1126' }} />
           <div style={{ flex: 1, background: '#fff' }} />
           <div style={{ flex: 1, background: '#00C46A' }} />
         </div>
 
-        <div style={{ maxWidth: 480, margin: '0 auto', padding: '24px 20px 28px', position: 'relative' }}>
+        <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 20px 28px', position: 'relative' }}>
+          {/* Wordmark */}
+          <div style={{ marginBottom: 16 }}>
+            <Wordmark center={false} />
+          </div>
           {/* Avatar + name */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 18, marginBottom: 20 }}>
             <div style={{

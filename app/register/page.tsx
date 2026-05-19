@@ -4,6 +4,7 @@ import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import HeroBall from '@/app/components/HeroBall'
 
 function RegisterForm() {
   const router = useRouter()
@@ -32,25 +33,41 @@ function RegisterForm() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bf-bg)' }}>
 
-      {/* Top stripe */}
-      <div className="stripe-navy" style={{ padding: '28px 24px 32px' }}>
-        <div style={{ maxWidth: 420, margin: '0 auto' }}>
-          <p style={{
-            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 11,
-            letterSpacing: '.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,.55)',
-            marginBottom: 10,
-          }}>
-            Mundial 2026 · Quiniela
-          </p>
-          <h1 className="display-heading display-lg" style={{ color: '#fff' }}>
+      {/* Hero */}
+      <div className="stripe-navy">
+        <div style={{ display: 'flex', height: 4 }}>
+          <div style={{ flex: 1, background: '#CE1126' }} />
+          <div style={{ flex: 1, background: '#fff' }} />
+          <div style={{ flex: 1, background: '#00C46A' }} />
+        </div>
+        <div className="hero-texture" />
+        <HeroBall size={200} opacity={0.07} />
+
+        <div style={{ maxWidth: 420, margin: '0 auto', padding: '24px 24px 32px', position: 'relative' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 7, marginBottom: 16 }}>
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="7" stroke="rgba(255,255,255,.6)" strokeWidth="1.2"/>
+              <polygon points="8,3.5 10.8,5.6 9.8,8.9 6.2,8.9 5.2,5.6" fill="rgba(255,255,255,.3)" stroke="rgba(255,255,255,.5)" strokeWidth=".8"/>
+              <line x1="8" y1="1" x2="8" y2="3.5" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="14.4" y1="4.8" x2="10.8" y2="5.6" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="12.9" y1="13" x2="9.8" y2="8.9" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="3.1" y1="13" x2="6.2" y2="8.9" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="1.6" y1="4.8" x2="5.2" y2="5.6" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+            </svg>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, letterSpacing: '.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,.65)' }}>
+              BEAT<span style={{ color: '#00C46A' }}>·A·</span>FRIEND
+            </p>
+          </div>
+
+          <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 'clamp(30px, 7vw, 40px)', color: '#fff', letterSpacing: '-0.02em', lineHeight: 1 }}>
             Únete a la batalla
           </h1>
-          <p style={{ color: 'rgba(255,255,255,.65)', fontSize: 14, marginTop: 8, fontFamily: 'var(--font-display)' }}>
-            Predice, compite, humilla (o sé humillado).
+          <p style={{ color: 'rgba(255,255,255,.6)', fontSize: 14, marginTop: 8, fontFamily: 'var(--font-display)', fontWeight: 600 }}>
+            Predice · Compite · Humilla (o sé humillado)
           </p>
           {groupCode && (
             <div style={{ marginTop: 12 }}>
-              <span className="badge" style={{ background: 'rgba(0,196,106,.2)', color: 'var(--bf-green)', border: '1px solid rgba(0,196,106,.3)' }}>
+              <span className="badge" style={{ background: 'rgba(0,196,106,.2)', color: '#4DEBA0', border: '1px solid rgba(0,196,106,.3)' }}>
                 Entrando al grupo: {groupCode}
               </span>
             </div>

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase/client'
+import HeroBall from '@/app/components/HeroBall'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -25,31 +26,60 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen flex flex-col" style={{ background: 'var(--bf-bg)' }}>
 
-      {/* FIFA-style top stripe */}
-      <div className="stripe-navy" style={{ padding: '28px 24px 32px' }}>
-        <div style={{ maxWidth: 420, margin: '0 auto' }}>
-          {/* Top label */}
-          <p style={{
-            fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 11,
-            letterSpacing: '.12em', textTransform: 'uppercase', color: 'rgba(255,255,255,.55)',
-            marginBottom: 10,
-          }}>
-            Mundial 2026 · Quiniela
-          </p>
+      {/* Hero */}
+      <div className="stripe-navy" style={{ padding: '0 0 0 0' }}>
+        {/* Tricolor bar */}
+        <div style={{ display: 'flex', height: 4 }}>
+          <div style={{ flex: 1, background: '#CE1126' }} />
+          <div style={{ flex: 1, background: '#fff' }} />
+          <div style={{ flex: 1, background: '#00C46A' }} />
+        </div>
+        <div className="hero-texture" />
+        <HeroBall size={220} opacity={0.08} />
 
+        <div style={{ maxWidth: 420, margin: '0 auto', padding: '28px 24px 36px', position: 'relative' }}>
           {/* Wordmark */}
-          <h1 className="display-heading display-xl" style={{ color: '#fff' }}>
-            Beat<span style={{ color: 'var(--bf-green)' }}>·</span>a<span style={{ color: 'var(--bf-green)' }}>·</span>Friend
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 20 }}>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="7" stroke="rgba(255,255,255,.65)" strokeWidth="1.2"/>
+              <polygon points="8,3.5 10.8,5.6 9.8,8.9 6.2,8.9 5.2,5.6" fill="rgba(255,255,255,.35)" stroke="rgba(255,255,255,.5)" strokeWidth=".8"/>
+              <line x1="8" y1="1" x2="8" y2="3.5" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="14.4" y1="4.8" x2="10.8" y2="5.6" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="12.9" y1="13" x2="9.8" y2="8.9" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="3.1" y1="13" x2="6.2" y2="8.9" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="1.6" y1="4.8" x2="5.2" y2="5.6" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+            </svg>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 11, letterSpacing: '.16em', textTransform: 'uppercase', color: 'rgba(255,255,255,.7)' }}>
+              BEAT<span style={{ color: '#00C46A' }}>·A·</span>FRIEND
+            </p>
+            <svg width="13" height="13" viewBox="0 0 16 16" fill="none">
+              <circle cx="8" cy="8" r="7" stroke="rgba(255,255,255,.65)" strokeWidth="1.2"/>
+              <polygon points="8,3.5 10.8,5.6 9.8,8.9 6.2,8.9 5.2,5.6" fill="rgba(255,255,255,.35)" stroke="rgba(255,255,255,.5)" strokeWidth=".8"/>
+              <line x1="8" y1="1" x2="8" y2="3.5" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="14.4" y1="4.8" x2="10.8" y2="5.6" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="12.9" y1="13" x2="9.8" y2="8.9" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="3.1" y1="13" x2="6.2" y2="8.9" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+              <line x1="1.6" y1="4.8" x2="5.2" y2="5.6" stroke="rgba(255,255,255,.4)" strokeWidth=".9"/>
+            </svg>
+          </div>
+
+          {/* Big logotype */}
+          <h1 style={{
+            fontFamily: 'var(--font-display)', fontWeight: 800,
+            fontSize: 'clamp(38px, 9vw, 52px)', lineHeight: .95,
+            letterSpacing: '-0.03em', color: '#fff',
+          }}>
+            Beat<span style={{ color: '#00C46A' }}>·a·</span>Friend
           </h1>
-          <p style={{ color: 'rgba(255,255,255,.65)', fontSize: 14, marginTop: 8, fontFamily: 'var(--font-display)' }}>
-            Predice, compite y humilla a tus amigos.
+          <p style={{ color: 'rgba(255,255,255,.6)', fontSize: 14, marginTop: 10, fontFamily: 'var(--font-display)', fontWeight: 600 }}>
+            Predice · Compite · Humilla a tus amigos
           </p>
 
-          {/* Info pills */}
-          <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap' }}>
-            <span className="badge badge-green">Registro en 60 seg</span>
-            <span className="badge" style={{ background: 'rgba(255,255,255,.12)', color: '#fff' }}>$1 por grupo</span>
-            <span className="badge" style={{ background: 'rgba(255,255,255,.12)', color: '#fff' }}>Mundial 2026</span>
+          {/* Pills */}
+          <div style={{ display: 'flex', gap: 8, marginTop: 16, flexWrap: 'wrap' }}>
+            <span className="badge badge-green">Mundial 2026</span>
+            <span className="badge" style={{ background: 'rgba(255,255,255,.1)', color: 'rgba(255,255,255,.8)', border: '1px solid rgba(255,255,255,.15)' }}>$1 por grupo</span>
+            <span className="badge" style={{ background: 'rgba(255,255,255,.1)', color: 'rgba(255,255,255,.8)', border: '1px solid rgba(255,255,255,.15)' }}>Registro gratis</span>
           </div>
         </div>
       </div>
