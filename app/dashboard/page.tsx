@@ -253,33 +253,28 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        {/* ── ACTION BUTTONS ───────────────────────────────── */}
-        <div style={{ display: 'flex', gap: 10 }}>
-          <Link href="/crear-grupo" style={{
-            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-            padding: '14px 12px',
-            background: 'var(--bf-green)', borderRadius: 18, textDecoration: 'none',
-            boxShadow: 'var(--bf-shadow-green)',
+        {/* ── CREAR GRUPO ──────────────────────────────────── */}
+        <Link href="/crear-grupo" style={{
+          display: 'flex', alignItems: 'center', gap: 14, padding: '16px 20px',
+          background: 'var(--bf-green)', borderRadius: 20, textDecoration: 'none',
+          boxShadow: 'var(--bf-shadow-green)',
+        }}>
+          <div style={{
+            width: 38, height: 38, borderRadius: 12, flexShrink: 0,
+            background: 'rgba(255,255,255,.22)', display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M9 3v12M3 9h12" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
             </svg>
-            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: '#fff' }}>Nuevo grupo</p>
-          </Link>
-
-          <Link href="/mundial" style={{
-            flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10,
-            padding: '14px 12px',
-            background: 'linear-gradient(135deg, #001F5B 0%, #003087 100%)', borderRadius: 18, textDecoration: 'none',
-            boxShadow: '0 4px 14px rgba(0,31,91,.25)',
-          }}>
-            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
-              <circle cx="9" cy="9" r="7.5" stroke="white" strokeWidth="1.6"/>
-              <path d="M1.5 9h15M9 1.5C9 1.5 11.5 5 11.5 9S9 16.5 9 16.5" stroke="rgba(255,255,255,.6)" strokeWidth="1.2"/>
-            </svg>
-            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: '#fff' }}>Grupos FIFA</p>
-          </Link>
-        </div>
+          </div>
+          <div>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: '#fff' }}>Crear nuevo grupo</p>
+            <p style={{ fontSize: 12, color: 'rgba(255,255,255,.7)', marginTop: 1 }}>Invita a tus amigos a sufrir</p>
+          </div>
+          <svg style={{ marginLeft: 'auto', opacity: .6 }} width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M5 3l6 5-6 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </Link>
       </div>
 
       {/* ── BOTTOM NAV ───────────────────────────────────── */}
