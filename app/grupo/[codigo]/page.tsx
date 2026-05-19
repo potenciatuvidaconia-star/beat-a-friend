@@ -412,6 +412,13 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
           </svg>
           <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 600 }}>Predecir</span>
         </Link>
+        <Link href="/mundial" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', color: 'var(--bf-text-3)' }}>
+          <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/>
+            <path d="M2 11h18M11 2C11 2 14 6 14 11s-3 9-3 9" stroke="currentColor" strokeWidth="1.3"/>
+          </svg>
+          <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 600 }}>Mundial</span>
+        </Link>
       </nav>
     </div>
   )

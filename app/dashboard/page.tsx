@@ -50,6 +50,32 @@ export default async function DashboardPage() {
 
       <div style={{ maxWidth: 480, margin: '0 auto', padding: '20px 20px 40px', display: 'flex', flexDirection: 'column', gap: 16 }}>
 
+        {/* Mundial standings CTA */}
+        <Link href="/mundial" style={{
+          display: 'flex', alignItems: 'center', gap: 14, padding: '14px 18px',
+          background: 'linear-gradient(135deg, #001F5B 0%, #003087 100%)',
+          borderRadius: 'var(--bf-r-lg)', textDecoration: 'none',
+          boxShadow: '0 4px 16px rgba(0,31,91,.25)',
+        }}>
+          <div style={{
+            width: 40, height: 40, borderRadius: 12, flexShrink: 0,
+            background: 'rgba(255,255,255,.15)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <circle cx="10" cy="10" r="8.5" stroke="white" strokeWidth="1.5"/>
+              <path d="M1.5 10h17M10 1.5C10 1.5 13 5 13 10s-3 8.5-3 8.5" stroke="rgba(255,255,255,.6)" strokeWidth="1.2"/>
+              <path d="M3 5.5h14M3 14.5h14" stroke="rgba(255,255,255,.4)" strokeWidth="1"/>
+            </svg>
+          </div>
+          <div>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: '#fff' }}>Tabla de Grupos</p>
+            <p style={{ fontSize: 12, color: 'rgba(255,255,255,.6)', marginTop: 1 }}>Mundial 2026 · 12 grupos</p>
+          </div>
+          <svg style={{ marginLeft: 'auto', opacity: .5 }} width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M5 3l6 5-6 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+        </Link>
+
         {/* Crear grupo CTA */}
         <Link href="/crear-grupo" style={{
           display: 'flex', alignItems: 'center', gap: 14, padding: '16px 18px',
@@ -171,11 +197,12 @@ export default async function DashboardPage() {
           </svg>
           <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700 }}>Inicio</span>
         </Link>
-        <Link href="/dashboard" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', color: 'var(--bf-text-3)' }}>
+        <Link href="/mundial" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', color: 'var(--bf-text-3)' }}>
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
-            <path d="M7 17V9M11 17V5M15 17v-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            <circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/>
+            <path d="M2 11h18M11 2C11 2 14 6 14 11s-3 9-3 9" stroke="currentColor" strokeWidth="1.3"/>
           </svg>
-          <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 600 }}>Rankings</span>
+          <span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 600 }}>Mundial</span>
         </Link>
         <Link href="/dashboard" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, textDecoration: 'none', color: 'var(--bf-text-3)' }}>
           <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
