@@ -2,12 +2,34 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
 
-// Days until World Cup June 11 2026
 function daysUntilWorldCup(): number {
   const wc = new Date('2026-06-11T00:00:00Z')
   const now = new Date()
-  const diff = wc.getTime() - now.getTime()
-  return Math.max(0, Math.ceil(diff / (1000 * 60 * 60 * 24)))
+  return Math.max(0, Math.ceil((wc.getTime() - now.getTime()) / 86_400_000))
+}
+
+function todayLabel() {
+  return new Date().toLocaleDateString('es-PA', { weekday: 'short', day: 'numeric', month: 'short' })
+}
+
+/** top N entries, including all ties at the Nth position */
+function topN(arr: { userId: string; name: string; pts: number }[], n: number) {
+  if (!arr.length) return []
+  const sorted = [...arr].sort((a, b) => b.pts - a.pts)
+  const cutoff = sorted[Math.min(n, sorted.length) - 1]?.pts ?? 0
+  return sorted.filter(d => d.pts >= cutoff && d.pts > 0)
+}
+
+/** bottom N entries, excluding already-shown top performers, including ties */
+function bottomN(
+  arr: { userId: string; name: string; pts: number }[],
+  n: number,
+  exclude: string[],
+) {
+  const rest = [...arr].filter(d => !exclude.includes(d.userId)).sort((a, b) => a.pts - b.pts)
+  if (!rest.length) return []
+  const cutoff = rest[Math.min(n, rest.length) - 1]?.pts ?? 0
+  return rest.filter(d => d.pts <= cutoff)
 }
 
 export default async function DashboardPage() {
@@ -25,9 +47,20 @@ export default async function DashboardPage() {
     .neq('status', 'banned')
     .order('joined_at', { ascending: false })
 
-  // Enrich each group with ranking context
+  // Fetch today's finished match IDs once (shared across all groups)
+  const todayStr = new Date().toISOString().split('T')[0]
+  const { data: todayMatches } = await supabase
+    .from('matches')
+    .select('id')
+    .eq('status', 'finished')
+    .gte('match_date', `${todayStr}T00:00:00Z`)
+    .lte('match_date', `${todayStr}T23:59:59Z`)
+  const todayMatchIds = (todayMatches ?? []).map((x: any) => x.id)
+
+  // Enrich each group with full ranking + daily stats
   const enriched = await Promise.all(
     (memberships ?? []).map(async (m: any) => {
+      // Full ranking
       const { data: allMembers } = await supabase
         .from('group_members')
         .select('user_id, points, profiles(display_name)')
@@ -38,14 +71,42 @@ export default async function DashboardPage() {
       const total = allMembers?.length ?? 1
       const myIdx = allMembers?.findIndex((x: any) => x.user_id === user.id) ?? 0
       const rank = myIdx + 1
-      const leader = allMembers?.[0] as any
       const isFirst = rank === 1
       const isLast = rank === total && total > 1
-      const leaderName = leader?.profiles?.display_name ?? ''
-      const leaderPts = leader?.points ?? 0
-      const gap = leaderPts - m.points
 
-      return { ...m, rank, total, isFirst, isLast, leaderName, leaderPts, gap }
+      // Daily stats for this group
+      let dailyStats: { userId: string; name: string; pts: number }[] = []
+      if (todayMatchIds.length > 0) {
+        const { data: preds } = await supabase
+          .from('predictions')
+          .select('user_id, points_earned, profiles(display_name)')
+          .eq('group_id', m.group_id)
+          .in('match_id', todayMatchIds)
+          .not('points_earned', 'is', null)
+
+        const byUser: Record<string, { name: string; pts: number }> = {}
+        for (const p of preds ?? []) {
+          const uid = (p as any).user_id
+          const name = (p as any).profiles?.display_name ?? '?'
+          if (!byUser[uid]) byUser[uid] = { name, pts: 0 }
+          byUser[uid].pts += (p as any).points_earned ?? 0
+        }
+        dailyStats = Object.entries(byUser)
+          .map(([userId, d]) => ({ userId, name: d.name, pts: d.pts }))
+          .sort((a, b) => b.pts - a.pts)
+      }
+
+      const top = topN(dailyStats, 3)
+      const bottom = bottomN(dailyStats, 3, top.map(t => t.userId))
+
+      return {
+        ...m,
+        allMembers: allMembers ?? [],
+        rank, total, isFirst, isLast,
+        dailyTop: top,
+        dailyBottom: bottom,
+        hasDailyData: dailyStats.length > 0,
+      }
     })
   )
 
@@ -71,7 +132,6 @@ export default async function DashboardPage() {
         </div>
 
         <div style={{ maxWidth: 480, margin: '0 auto', padding: '18px 20px 24px', position: 'relative' }}>
-          {/* Top row */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
             <div>
               <p style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase' }}>
@@ -82,17 +142,17 @@ export default async function DashboardPage() {
               </h1>
             </div>
             <Link href="/perfil" style={{
-              width: 44, height: 44, borderRadius: '50%', textDecoration: 'none',
+              width: 44, height: 44, borderRadius: '50%', textDecoration: 'none', flexShrink: 0,
               background: 'linear-gradient(135deg, var(--bf-green) 0%, #008C4A 100%)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, color: '#fff',
-              boxShadow: '0 4px 12px rgba(0,196,106,.4)', flexShrink: 0,
+              boxShadow: '0 4px 12px rgba(0,196,106,.4)',
             }}>
               {initial}
             </Link>
           </div>
 
-          {/* Countdown card */}
+          {/* Countdown */}
           <div style={{
             background: days <= 7
               ? 'linear-gradient(135deg, rgba(206,17,38,.3) 0%, rgba(206,17,38,.15) 100%)'
@@ -114,144 +174,330 @@ export default async function DashboardPage() {
                 {days === 0 ? '¡El Mundial empieza HOY!' : days <= 7 ? '¡El Mundial está a la vuelta!' : 'Para el Mundial 2026'}
               </p>
               <p style={{ fontSize: 12, color: 'rgba(255,255,255,.5)', marginTop: 3 }}>
-                {days === 0 ? 'Haz tus predicciones ahora' : '11 de junio · EE.UU / México / Canadá'}
+                11 de junio · EE.UU / México / Canadá
               </p>
             </div>
-            <div style={{ flexShrink: 0 }}>
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" opacity=".6">
-                <circle cx="16" cy="16" r="13" stroke="white" strokeWidth="2"/>
-                <path d="M2 16h28M16 3C16 3 20 9 20 16s-4 13-4 13" stroke="white" strokeWidth="1.5"/>
-                <path d="M5 8h22M5 24h22" stroke="white" strokeWidth="1"/>
-              </svg>
-            </div>
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" opacity=".5">
+              <circle cx="16" cy="16" r="13" stroke="white" strokeWidth="2"/>
+              <path d="M2 16h28M16 3C16 3 20 9 20 16s-4 13-4 13" stroke="white" strokeWidth="1.5"/>
+              <path d="M5 8h22M5 24h22" stroke="white" strokeWidth="1"/>
+            </svg>
           </div>
         </div>
       </div>
 
-      <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 16px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
-
-        {/* ── MIS GRUPOS ───────────────────────────────────── */}
-        {enriched.length > 0 && (
-          <>
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: 'var(--bf-text-3)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
-                Mis grupos
-              </p>
-              <Link href="/crear-grupo" style={{
-                fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--bf-green)',
-                textDecoration: 'none', display: 'flex', alignItems: 'center', gap: 4,
-              }}>
-                + Nuevo
-              </Link>
-            </div>
-
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {enriched.map((m: any) => {
-                const accentColor = m.isFirst ? '#FFBA00' : m.isLast ? '#FF5C5C' : 'var(--bf-navy)'
-                const accentBg = m.isFirst
-                  ? 'linear-gradient(135deg, #FFBA00 0%, #E6A300 100%)'
-                  : m.isLast
-                  ? 'linear-gradient(135deg, #FF5C5C 0%, #E03E3E 100%)'
-                  : 'linear-gradient(135deg, #001F5B 0%, #003087 100%)'
-                const apodo = m.isFirst
-                  ? m.groups.apodo_primero ?? 'El Profeta'
-                  : m.isLast
-                  ? m.groups.apodo_ultimo ?? 'El Ciego'
-                  : null
-                const taunt = m.isLast && m.total > 1
-                  ? `${m.leaderName} te lleva ${m.leaderPts - m.points} pts`
-                  : m.isFirst && m.total > 1
-                  ? `Liderando con ${m.points} pts`
-                  : m.gap > 0
-                  ? `${m.gap} pts detrás de ${m.leaderName}`
-                  : null
-
-                return (
-                  <Link
-                    key={m.id}
-                    href={`/grupo/${m.groups.code}`}
-                    style={{
-                      display: 'block', textDecoration: 'none',
-                      background: 'var(--bf-card)', borderRadius: 20, overflow: 'hidden',
-                      border: `1.5px solid ${m.isFirst ? '#FFE099' : m.isLast ? '#FFCACA' : 'var(--bf-border)'}`,
-                      boxShadow: m.isFirst
-                        ? '0 6px 20px rgba(255,186,0,.2)'
-                        : m.isLast
-                        ? '0 6px 20px rgba(255,92,92,.15)'
-                        : 'var(--bf-shadow-sm)',
-                    }}
-                  >
-                    {/* Colored top bar */}
-                    <div style={{ height: 4, background: accentBg }} />
-
-                    <div style={{ padding: '14px 16px', display: 'flex', alignItems: 'center', gap: 14 }}>
-                      {/* Rank badge */}
-                      <div style={{
-                        width: 48, height: 48, borderRadius: 14, flexShrink: 0,
-                        background: accentBg,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: 'var(--font-display)', fontWeight: 800,
-                        fontSize: m.isLast ? 11 : 18, color: '#fff',
-                      }}>
-                        {m.isFirst ? '1°' : m.isLast ? 'últ' : `${m.rank}°`}
-                      </div>
-
-                      <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, color: 'var(--bf-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                          {m.groups.name}
-                        </p>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 3, flexWrap: 'wrap' }}>
-                          {apodo && (
-                            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: accentColor }}>
-                              "{apodo}"
-                            </span>
-                          )}
-                          {taunt && (
-                            <span style={{ fontSize: 11, color: 'var(--bf-text-3)' }}>{taunt}</span>
-                          )}
-                        </div>
-                      </div>
-
-                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: accentColor, lineHeight: 1 }}>
-                          {m.points}
-                        </p>
-                        <p style={{ fontSize: 10, color: 'var(--bf-text-3)', marginTop: 1 }}>
-                          pts · {m.total} jug
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Payment warning strip */}
-                    {m.payment_status === 'pending' && (
-                      <div style={{ background: '#FFFBEB', borderTop: '1px solid #FDE68A', padding: '7px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#FFBA00', flexShrink: 0 }} />
-                        <p style={{ fontSize: 11, color: '#7B5800', fontFamily: 'var(--font-display)', fontWeight: 700 }}>
-                          Pago pendiente — envía $1 por Yappy
-                        </p>
-                      </div>
-                    )}
-                  </Link>
-                )
-              })}
-            </div>
-          </>
-        )}
+      {/* ── CONTENT ──────────────────────────────────────── */}
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 16px 20px', display: 'flex', flexDirection: 'column', gap: 20 }}>
 
         {/* ── EMPTY STATE ──────────────────────────────────── */}
         {enriched.length === 0 && (
           <div style={{
-            background: 'var(--bf-card)', borderRadius: 20, padding: '32px 24px',
+            background: 'var(--bf-card)', borderRadius: 20, padding: '36px 24px',
             textAlign: 'center', border: '1px dashed var(--bf-border)',
           }}>
             <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: 'var(--bf-text)' }}>
               Tus amigos te están esperando
             </p>
             <p style={{ fontSize: 13, color: 'var(--bf-text-3)', marginTop: 6, lineHeight: 1.5 }}>
-              Crea un grupo antes de que empiece el Mundial y empieza a cobrar facturas.
+              Crea un grupo antes del Mundial y empieza a cobrar facturas.
             </p>
           </div>
         )}
+
+        {/* ── GROUP SECTIONS ───────────────────────────────── */}
+        {enriched.map((m: any) => {
+          const apodoPrimero = m.groups.apodo_primero ?? 'El Profeta'
+          const apodoUltimo = m.groups.apodo_ultimo ?? 'El Ciego'
+
+          return (
+            <div key={m.id} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+              {/* Group header */}
+              <Link
+                href={`/grupo/${m.groups.code}`}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '14px 18px',
+                  background: 'linear-gradient(135deg, #001F5B 0%, #003087 100%)',
+                  borderRadius: 18, textDecoration: 'none',
+                  boxShadow: '0 4px 16px rgba(0,31,91,.2)',
+                }}
+              >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: '#fff', letterSpacing: '-0.01em' }}>
+                    {m.groups.name}
+                  </h2>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{
+                      fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700,
+                      letterSpacing: '.06em', textTransform: 'uppercase',
+                      padding: '2px 8px', borderRadius: 999,
+                      background: m.groups.mode === 'pro' ? 'rgba(255,92,92,.3)' : 'rgba(0,196,106,.25)',
+                      color: m.groups.mode === 'pro' ? '#FF8C8C' : '#4DEBA0',
+                    }}>
+                      {m.groups.mode === 'basic' ? 'Básica' : 'Pro'}
+                    </span>
+                    <span style={{ fontSize: 11, color: 'rgba(255,255,255,.45)' }}>
+                      {m.total} jugadores
+                    </span>
+                  </div>
+                </div>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" opacity=".5">
+                  <path d="M5 3l6 5-6 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+
+              {/* ── RANKING ─────────────────────────────────── */}
+              <div style={{
+                background: 'var(--bf-card)', borderRadius: 18,
+                border: '1.5px solid var(--bf-border)',
+                overflow: 'hidden',
+                boxShadow: 'var(--bf-shadow-sm)',
+              }}>
+                {m.allMembers.map((member: any, i: number) => {
+                  const pos = i + 1
+                  const isMe = member.user_id === user.id
+                  const isFst = pos === 1
+                  const isLst = pos === m.total && m.total > 1
+                  const name = member.profiles?.display_name ?? '?'
+
+                  if (isFst) {
+                    return (
+                      <div key={member.user_id} style={{
+                        background: 'linear-gradient(135deg, #FFBA00 0%, #E6A300 100%)',
+                        padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12,
+                      }}>
+                        <div style={{
+                          width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
+                          background: 'rgba(255,255,255,.25)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, color: '#fff',
+                        }}>1</div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 15, color: '#fff' }}>
+                            {name}{isMe && <span style={{ fontSize: 11, opacity: .7, marginLeft: 6 }}>(tú)</span>}
+                          </p>
+                          <p style={{ fontSize: 11, color: 'rgba(255,255,255,.7)', marginTop: 1 }}>{apodoPrimero}</p>
+                        </div>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#fff' }}>
+                          {member.points}<span style={{ fontSize: 11, fontWeight: 600, opacity: .7, marginLeft: 2 }}>pts</span>
+                        </p>
+                      </div>
+                    )
+                  }
+
+                  if (isLst) {
+                    return (
+                      <div key={member.user_id} style={{
+                        background: 'linear-gradient(135deg, #FF5C5C 0%, #E03E3E 100%)',
+                        padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 12,
+                        borderTop: '1px solid rgba(255,255,255,.1)',
+                      }}>
+                        <div style={{
+                          width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
+                          background: 'rgba(255,255,255,.2)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, color: '#fff',
+                        }}>últ</div>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: '#fff' }}>
+                            {name}{isMe && <span style={{ fontSize: 11, opacity: .7, marginLeft: 6 }}>(tú)</span>}
+                          </p>
+                          <p style={{ fontSize: 11, color: 'rgba(255,255,255,.7)', marginTop: 1 }}>{apodoUltimo}</p>
+                        </div>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#fff' }}>
+                          {member.points}<span style={{ fontSize: 11, fontWeight: 600, opacity: .7, marginLeft: 2 }}>pts</span>
+                        </p>
+                      </div>
+                    )
+                  }
+
+                  return (
+                    <div key={member.user_id} style={{
+                      padding: '11px 18px', display: 'flex', alignItems: 'center', gap: 12,
+                      background: isMe ? 'rgba(0,196,106,.06)' : '#fff',
+                      borderTop: '1px solid var(--bf-divider)',
+                    }}>
+                      <div style={{
+                        width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
+                        background: 'var(--bf-card-soft)', border: '1.5px solid var(--bf-border)',
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13,
+                        color: isMe ? 'var(--bf-green-dark)' : 'var(--bf-text-3)',
+                      }}>{pos}</div>
+                      <p style={{
+                        flex: 1, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
+                        color: 'var(--bf-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                      }}>
+                        {name}{isMe && <span style={{ fontSize: 11, color: 'var(--bf-text-3)', marginLeft: 4 }}>(tú)</span>}
+                      </p>
+                      <p style={{
+                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18,
+                        color: isMe ? 'var(--bf-green-dark)' : 'var(--bf-text)',
+                      }}>
+                        {member.points}<span style={{ fontSize: 11, fontWeight: 600, color: 'var(--bf-text-3)', marginLeft: 2 }}>pts</span>
+                      </p>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* ── HOY ─────────────────────────────────────── */}
+              {m.hasDailyData && (
+                <div style={{
+                  background: 'var(--bf-card)', borderRadius: 18,
+                  border: '1.5px solid var(--bf-border)',
+                  overflow: 'hidden',
+                }}>
+                  {/* Header */}
+                  <div style={{
+                    padding: '10px 16px',
+                    background: 'linear-gradient(90deg, rgba(0,31,91,.04) 0%, transparent 100%)',
+                    borderBottom: '1px solid var(--bf-divider)',
+                    display: 'flex', alignItems: 'center', gap: 8,
+                  }}>
+                    <div style={{ width: 8, height: 8, borderRadius: '50%', background: '#00C46A', boxShadow: '0 0 6px #00C46A' }} />
+                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 12, color: 'var(--bf-text-2)', letterSpacing: '.08em', textTransform: 'uppercase' }}>
+                      Hoy · {todayLabel()}
+                    </p>
+                  </div>
+
+                  <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+
+                    {/* Top performers */}
+                    {m.dailyTop.length > 0 && (
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M7 1l1.5 3 3.3.5-2.4 2.3.6 3.3L7 8.8l-3 1.3.6-3.3L2.2 4.5 5.5 4 7 1z" fill="#FFBA00"/>
+                          </svg>
+                          <p style={{ fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 800, color: '#7B5800', letterSpacing: '.04em', textTransform: 'uppercase' }}>
+                            Mejores del día
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          {m.dailyTop.map((d: any, i: number) => {
+                            const isMe = d.userId === user.id
+                            return (
+                              <div key={d.userId} style={{
+                                display: 'flex', alignItems: 'center', gap: 10,
+                                background: i === 0 ? 'rgba(255,186,0,.1)' : 'transparent',
+                                borderRadius: 10, padding: '6px 10px',
+                              }}>
+                                <div style={{
+                                  width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
+                                  background: i === 0 ? '#FFBA00' : 'var(--bf-card-soft)',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10,
+                                  color: i === 0 ? '#fff' : 'var(--bf-text-3)',
+                                }}>
+                                  {i === 0 ? '1' : i + 1}
+                                </div>
+                                <p style={{ flex: 1, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'var(--bf-text)' }}>
+                                  {d.name}{isMe && <span style={{ color: 'var(--bf-text-3)', fontSize: 11, marginLeft: 4 }}>(tú)</span>}
+                                </p>
+                                <div style={{
+                                  padding: '3px 10px', borderRadius: 999,
+                                  background: 'rgba(255,186,0,.15)', border: '1px solid rgba(255,186,0,.4)',
+                                }}>
+                                  <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: '#7B5800' }}>
+                                    +{d.pts} pts
+                                  </p>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Divider between top and bottom */}
+                    {m.dailyTop.length > 0 && m.dailyBottom.length > 0 && (
+                      <div style={{ height: 1, background: 'var(--bf-divider)' }} />
+                    )}
+
+                    {/* Bottom performers */}
+                    {m.dailyBottom.length > 0 && (
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                          <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                            <path d="M7 13C7 13 2 9.5 2 5.5a3 3 0 015-2.2A3 3 0 0112 5.5C12 9.5 7 13 7 13z" fill="#FF5C5C"/>
+                          </svg>
+                          <p style={{ fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 800, color: '#9B2020', letterSpacing: '.04em', textTransform: 'uppercase' }}>
+                            Peores del día
+                          </p>
+                        </div>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+                          {m.dailyBottom.map((d: any, i: number) => {
+                            const isMe = d.userId === user.id
+                            return (
+                              <div key={d.userId} style={{
+                                display: 'flex', alignItems: 'center', gap: 10,
+                                background: 'transparent', borderRadius: 10, padding: '6px 10px',
+                              }}>
+                                <div style={{
+                                  width: 22, height: 22, borderRadius: '50%', flexShrink: 0,
+                                  background: 'rgba(255,92,92,.15)',
+                                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                  fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, color: '#E03E3E',
+                                }}>
+                                  {i + 1}
+                                </div>
+                                <p style={{ flex: 1, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'var(--bf-text)' }}>
+                                  {d.name}{isMe && <span style={{ color: 'var(--bf-text-3)', fontSize: 11, marginLeft: 4 }}>(tú)</span>}
+                                </p>
+                                <div style={{
+                                  padding: '3px 10px', borderRadius: 999,
+                                  background: 'rgba(255,92,92,.1)', border: '1px solid rgba(255,92,92,.3)',
+                                }}>
+                                  <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: '#E03E3E' }}>
+                                    {d.pts} pts
+                                  </p>
+                                </div>
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* ── PREDECIR CTA ─────────────────────────────── */}
+              <Link
+                href={`/grupo/${m.groups.code}/predicciones`}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: 12,
+                  padding: '14px 18px', borderRadius: 16,
+                  background: '#fff', border: '1.5px solid var(--bf-border)',
+                  textDecoration: 'none',
+                  boxShadow: 'var(--bf-shadow-sm)',
+                }}
+              >
+                <div style={{
+                  width: 36, height: 36, borderRadius: 12, flexShrink: 0,
+                  background: 'linear-gradient(135deg, #001F5B 0%, #003087 100%)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <circle cx="9" cy="9" r="7.5" stroke="rgba(255,255,255,.5)" strokeWidth="1.4"/>
+                    <path d="M9 2.5C9 2.5 11.5 5.5 11.5 9S9 15.5 9 15.5" stroke="rgba(255,255,255,.5)" strokeWidth="1.2"/>
+                    <path d="M2.5 9h13" stroke="rgba(255,255,255,.5)" strokeWidth="1.2"/>
+                    <circle cx="9" cy="9" r="2.5" fill="rgba(255,255,255,.3)"/>
+                  </svg>
+                </div>
+                <p style={{ flex: 1, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--bf-text)' }}>
+                  Ver partidos y predecir
+                </p>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M4 2l5 5-5 5" stroke="var(--bf-text-3)" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+
+            </div>
+          )
+        })}
 
         {/* ── CREAR GRUPO ──────────────────────────────────── */}
         <Link href="/crear-grupo" style={{
@@ -261,7 +507,8 @@ export default async function DashboardPage() {
         }}>
           <div style={{
             width: 38, height: 38, borderRadius: 12, flexShrink: 0,
-            background: 'rgba(255,255,255,.22)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+            background: 'rgba(255,255,255,.22)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
               <path d="M9 3v12M3 9h12" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
@@ -275,6 +522,7 @@ export default async function DashboardPage() {
             <path d="M5 3l6 5-6 5" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </Link>
+
       </div>
 
       {/* ── BOTTOM NAV ───────────────────────────────────── */}
@@ -290,7 +538,7 @@ export default async function DashboardPage() {
           { href: '/mundial', label: 'Mundial', active: false, icon: <><circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/><path d="M2 11h18M11 2C11 2 13.5 6 13.5 11S11 20 11 20" stroke="currentColor" strokeWidth="1.2"/></> },
           { href: '/perfil', label: 'Perfil', active: false, icon: <><circle cx="11" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/><path d="M3 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></> },
         ].map(tab => (
-          <Link key={tab.href} href={tab.href} style={{
+          <Link key={tab.label} href={tab.href} style={{
             flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
             textDecoration: 'none', color: tab.active ? 'var(--bf-navy)' : 'var(--bf-text-3)',
             padding: '4px 2px',
