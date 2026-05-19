@@ -3,6 +3,9 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import HeroBall from '@/app/components/HeroBall'
 import Wordmark from '@/app/components/Wordmark'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore – path has brackets in folder name, works fine at runtime
+import GroupChat from '@/app/grupo/[codigo]/GroupChat'
 
 function daysUntilWorldCup(): number {
   const wc = new Date('2026-06-11T00:00:00Z')
@@ -101,6 +104,14 @@ export default async function DashboardPage() {
       const top = topN(dailyStats, 3)
       const bottom = bottomN(dailyStats, 3, top.map(t => t.userId))
 
+      // Fetch last 30 chat messages for this group
+      const { data: chatMessages } = await supabase
+        .from('group_messages')
+        .select('*, profiles(display_name)')
+        .eq('group_id', m.group_id)
+        .order('created_at', { ascending: true })
+        .limit(30)
+
       return {
         ...m,
         allMembers: allMembers ?? [],
@@ -108,6 +119,7 @@ export default async function DashboardPage() {
         dailyTop: top,
         dailyBottom: bottom,
         hasDailyData: dailyStats.length > 0,
+        chatMessages: chatMessages ?? [],
       }
     })
   )
@@ -540,6 +552,13 @@ export default async function DashboardPage() {
                 </div>
               )}
 
+              {/* ── CHAT GRUPAL ──────────────────────────────── */}
+              <GroupChat
+                groupId={m.group_id}
+                currentUserId={user.id}
+                initialMessages={m.chatMessages}
+              />
+
               {/* ── PREDECIR CTA ─────────────────────────────── */}
               <Link
                 href={`/grupo/${m.groups.code}/predicciones`}
@@ -611,7 +630,7 @@ export default async function DashboardPage() {
         {[
           { href: '/dashboard', label: 'Inicio', active: true, icon: <path d="M3 9.5L11 2l8 7.5V20a1 1 0 01-1 1H14v-5H8v5H4a1 1 0 01-1-1V9.5z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/> },
           { href: enriched[0] ? `/grupo/${enriched[0].groups.code}` : '/dashboard', label: 'Ranking', active: false, icon: <path d="M7 17V9M11 17V5M15 17v-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/> },
-          { href: '/mundial', label: 'Mundial', active: false, icon: <><circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/><path d="M2 11h18M11 2C11 2 13.5 6 13.5 11S11 20 11 20" stroke="currentColor" strokeWidth="1.2"/></> },
+          { href: '/mundial', label: 'Grupos', active: false, icon: <><circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/><path d="M2 11h18M11 2C11 2 13.5 6 13.5 11S11 20 11 20" stroke="currentColor" strokeWidth="1.2"/></> },
           { href: '/perfil', label: 'Perfil', active: false, icon: <><circle cx="11" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/><path d="M3 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></> },
         ].map(tab => (
           <Link key={tab.label} href={tab.href} style={{

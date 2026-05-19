@@ -3,7 +3,6 @@ import { redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatDeadline } from '@/lib/utils'
 import ShareButton from './ShareButton'
-import GroupChat from './GroupChat'
 import ZumbarButton from './ZumbarButton'
 import HeroBall from '@/app/components/HeroBall'
 import Wordmark from '@/app/components/Wordmark'
@@ -50,14 +49,6 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
 
   const total = members?.length ?? 0
   const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/unirse/${codigo}`
-
-  // Fetch last 50 chat messages
-  const { data: initialMessages } = await supabase
-    .from('group_messages')
-    .select('*, profiles(display_name)')
-    .eq('group_id', group.id)
-    .order('created_at', { ascending: true })
-    .limit(50)
 
   const platformYappy = process.env.NEXT_PUBLIC_YAPPY_NUMBER ?? '507-XXXX-XXXX'
   const apodoPrimero: string = group.apodo_primero ?? 'El Profeta'
@@ -233,6 +224,13 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
               const isMe = m.user_id === user.id
               const isFirst = pos === 1
               const isLast = pos === total && total > 1
+
+              // Muro de la Vergüenza: bottom 2 players (or 1 if total < 4)
+              const shameCount = total >= 4 ? 2 : total >= 2 ? 1 : 0
+              const shameStartPos = total - shameCount + 1
+              const isInShame = pos >= shameStartPos && !isFirst && total > 1
+              const showMuroHeader = pos === shameStartPos && total > 2
+
               const avatarUrl: string | null = m.profiles?.avatar_url ?? null
               const displayName: string = m.profiles?.display_name ?? '?'
               const initial = displayName[0].toUpperCase()
@@ -290,6 +288,16 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
               if (isLast) {
                 return (
                   <div key={`sótano-${m.id}`} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {/* Show Muro header here only when shame = 1 (last is the only shame entry) */}
+                    {showMuroHeader && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(255,92,92,.5), transparent)' }} />
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, color: '#FF5C5C', letterSpacing: '.14em', textTransform: 'uppercase' }}>
+                          🧱 Muro de la Vergüenza
+                        </p>
+                        <div style={{ flex: 1, height: 1, background: 'linear-gradient(270deg, rgba(255,92,92,.5), transparent)' }} />
+                      </div>
+                    )}
                     {/* ZONA DEL SÓTANO divider */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                       <div style={{ flex: 1, height: 1, background: 'rgba(255,92,92,.3)' }} />
@@ -332,37 +340,96 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
                 )
               }
 
-              return (
-                <div key={m.id} style={{
-                  background: isMe ? 'var(--bf-green-soft)' : '#fff',
-                  border: `1.5px solid ${isMe ? 'rgba(0,196,106,.35)' : 'var(--bf-border)'}`,
-                  borderRadius: 16, padding: '11px 14px',
-                  display: 'flex', alignItems: 'center', gap: 12,
-                }}>
-                  <div style={{ position: 'relative', flexShrink: 0 }}>
-                    <AvatarCircle size={38} border="1.5px solid var(--bf-border)" />
-                    <div style={{
-                      position: 'absolute', bottom: -3, right: -3,
-                      width: 17, height: 17, borderRadius: '50%',
-                      background: isMe ? 'var(--bf-green)' : 'var(--bf-card-soft)',
-                      border: `1.5px solid ${isMe ? 'var(--bf-green-soft)' : 'var(--bf-border)'}`,
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 9,
-                      color: isMe ? '#fff' : 'var(--bf-text-3)',
-                    }}>{pos}</div>
-                  </div>
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--bf-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {displayName}
-                      {isMe && <span style={{ fontSize: 11, color: 'var(--bf-text-3)', marginLeft: 4 }}>(tú)</span>}
-                    </p>
-                    {m.payment_status === 'pending' && (
-                      <p style={{ fontSize: 10, color: '#7B5800', fontWeight: 600, marginTop: 2 }}>pago pendiente</p>
+              // Shame card (penultimate — inside muro but not the absolute last)
+              if (isInShame && !isLast) {
+                return (
+                  <div key={`shame-${m.id}`} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {showMuroHeader && (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(255,92,92,.5), transparent)' }} />
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, color: '#FF5C5C', letterSpacing: '.14em', textTransform: 'uppercase' }}>
+                          🧱 Muro de la Vergüenza
+                        </p>
+                        <div style={{ flex: 1, height: 1, background: 'linear-gradient(270deg, rgba(255,92,92,.5), transparent)' }} />
+                      </div>
                     )}
+                    <div style={{
+                      background: 'rgba(255,92,92,.07)',
+                      border: '1.5px solid rgba(255,92,92,.25)',
+                      borderRadius: 16, padding: '11px 14px',
+                      display: 'flex', alignItems: 'center', gap: 12,
+                    }}>
+                      <div style={{ position: 'relative', flexShrink: 0 }}>
+                        <AvatarCircle size={38} border="1.5px solid rgba(255,92,92,.3)" />
+                        <div style={{
+                          position: 'absolute', bottom: -3, right: -3,
+                          width: 17, height: 17, borderRadius: '50%',
+                          background: 'rgba(255,92,92,.2)',
+                          border: '1.5px solid rgba(255,92,92,.3)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 9, color: '#E03E3E',
+                        }}>{pos}</div>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--bf-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          {displayName}
+                          {isMe && <span style={{ fontSize: 11, color: 'var(--bf-text-3)', marginLeft: 4 }}>(tú)</span>}
+                        </p>
+                        <p style={{ fontSize: 10, color: '#E03E3E', fontWeight: 600, marginTop: 2 }}>
+                          😬 zona de peligro
+                        </p>
+                      </div>
+                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#E03E3E' }}>{m.points}</p>
+                        <p style={{ fontSize: 10, color: 'rgba(224,62,62,.6)' }}>pts</p>
+                      </div>
+                    </div>
                   </div>
-                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: isMe ? 'var(--bf-green-dark)' : 'var(--bf-text)' }}>{m.points}</p>
-                    <p style={{ fontSize: 10, color: 'var(--bf-text-3)' }}>pts</p>
+                )
+              }
+
+              return (
+                <div key={m.id} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {showMuroHeader && !isInShame && (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
+                      <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(255,92,92,.5), transparent)' }} />
+                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, color: '#FF5C5C', letterSpacing: '.14em', textTransform: 'uppercase' }}>
+                        🧱 Muro de la Vergüenza
+                      </p>
+                      <div style={{ flex: 1, height: 1, background: 'linear-gradient(270deg, rgba(255,92,92,.5), transparent)' }} />
+                    </div>
+                  )}
+                  <div style={{
+                    background: isMe ? 'var(--bf-green-soft)' : '#fff',
+                    border: `1.5px solid ${isMe ? 'rgba(0,196,106,.35)' : 'var(--bf-border)'}`,
+                    borderRadius: 16, padding: '11px 14px',
+                    display: 'flex', alignItems: 'center', gap: 12,
+                  }}>
+                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                      <AvatarCircle size={38} border="1.5px solid var(--bf-border)" />
+                      <div style={{
+                        position: 'absolute', bottom: -3, right: -3,
+                        width: 17, height: 17, borderRadius: '50%',
+                        background: isMe ? 'var(--bf-green)' : 'var(--bf-card-soft)',
+                        border: `1.5px solid ${isMe ? 'var(--bf-green-soft)' : 'var(--bf-border)'}`,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 9,
+                        color: isMe ? '#fff' : 'var(--bf-text-3)',
+                      }}>{pos}</div>
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--bf-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        {displayName}
+                        {isMe && <span style={{ fontSize: 11, color: 'var(--bf-text-3)', marginLeft: 4 }}>(tú)</span>}
+                      </p>
+                      {m.payment_status === 'pending' && (
+                        <p style={{ fontSize: 10, color: '#7B5800', fontWeight: 600, marginTop: 2 }}>pago pendiente</p>
+                      )}
+                    </div>
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: isMe ? 'var(--bf-green-dark)' : 'var(--bf-text)' }}>{m.points}</p>
+                      <p style={{ fontSize: 10, color: 'var(--bf-text-3)' }}>pts</p>
+                    </div>
                   </div>
                 </div>
               )
@@ -401,13 +468,6 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
           </svg>
           Ver partidos y predecir
         </Link>
-
-        {/* ── CHAT GRUPAL ───────────────────────────────── */}
-        <GroupChat
-          groupId={group.id}
-          currentUserId={user.id}
-          initialMessages={(initialMessages ?? []) as any}
-        />
 
         {/* ── TROFEO / DIPLOMA ──────────────────────────── */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
@@ -476,7 +536,7 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
         {[
           { href: '/dashboard', label: 'Inicio', active: false, icon: <path d="M3 9.5L11 2l8 7.5V20a1 1 0 01-1 1H14v-5H8v5H4a1 1 0 01-1-1V9.5z" stroke="currentColor" strokeWidth="1.8" strokeLinejoin="round"/> },
           { href: `/grupo/${codigo}`, label: 'Ranking', active: true, icon: <path d="M7 17V9M11 17V5M15 17v-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/> },
-          { href: '/mundial', label: 'Mundial', active: false, icon: <><circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/><path d="M2 11h18M11 2C11 2 13.5 6 13.5 11S11 20 11 20" stroke="currentColor" strokeWidth="1.2"/></> },
+          { href: '/mundial', label: 'Grupos', active: false, icon: <><circle cx="11" cy="11" r="9" stroke="currentColor" strokeWidth="1.8"/><path d="M2 11h18M11 2C11 2 13.5 6 13.5 11S11 20 11 20" stroke="currentColor" strokeWidth="1.2"/></> },
           { href: '/perfil', label: 'Perfil', active: false, icon: <><circle cx="11" cy="8" r="4" stroke="currentColor" strokeWidth="1.8"/><path d="M3 20c0-4 3.6-7 8-7s8 3 8 7" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/></> },
         ].map(tab => (
           <Link key={tab.href} href={tab.href} style={{
