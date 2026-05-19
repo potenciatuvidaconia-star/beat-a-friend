@@ -11,7 +11,6 @@ export default function CrearGrupoPage() {
   const router = useRouter()
   const [name, setName] = useState('')
   const [mode, setMode] = useState<'basic' | 'pro'>('basic')
-  const [yappy, setYappy] = useState('')
   const [apodoPrimero, setApodoPrimero] = useState('El Profeta')
   const [apodoUltimo, setApodoUltimo] = useState('El Ciego')
   const [premioCastigo, setPremioCastigo] = useState('')
@@ -34,7 +33,7 @@ export default function CrearGrupoPage() {
       .insert({
         name, code, mode,
         owner_id: user.id,
-        yappy_number: yappy,
+        yappy_number: 'platform',
         apodo_primero: apodoPrimero || 'El Profeta',
         apodo_ultimo: apodoUltimo || 'El Ciego',
         premio_castigo: premioCastigo || null,
@@ -108,20 +107,6 @@ export default function CrearGrupoPage() {
                 </button>
               ))}
             </div>
-          </div>
-
-          {/* Yappy */}
-          <div>
-            <label className="block text-sm font-semibold mb-1">Tu número de Yappy</label>
-            <p className="text-xs text-gray-400 mb-2">Aquí recibirás los $1 de cada participante</p>
-            <input
-              type="text"
-              placeholder="507-6XXX-XXXX"
-              value={yappy}
-              onChange={e => setYappy(e.target.value)}
-              required
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm focus:outline-none focus:ring-2 focus:ring-[#00C46A]"
-            />
           </div>
 
           {/* Apodos — la personalización del grupo */}

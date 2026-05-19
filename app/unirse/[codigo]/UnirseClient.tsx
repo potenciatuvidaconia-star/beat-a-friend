@@ -4,12 +4,13 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
+const PLATFORM_YAPPY = process.env.NEXT_PUBLIC_YAPPY_NUMBER ?? '507-XXXX-XXXX'
+
 interface Group {
   id: string
   name: string
   code: string
   mode: string
-  yappy_number: string
 }
 
 export default function UnirseClient({ group, userId }: { group: Group; userId: string }) {
@@ -46,7 +47,7 @@ export default function UnirseClient({ group, userId }: { group: Group; userId: 
           <div className="space-y-2 text-sm">
             <div className="flex justify-between">
               <span className="text-gray-500">Número</span>
-              <span className="font-bold">{group.yappy_number}</span>
+              <span className="font-bold">{PLATFORM_YAPPY}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-gray-500">Monto</span>
@@ -58,7 +59,7 @@ export default function UnirseClient({ group, userId }: { group: Group; userId: 
             </div>
           </div>
           <p className="text-xs text-gray-400 mt-3">
-            ⚠️ Pon el código <strong>{group.code}</strong> en el comentario del Yappy para que te identifiquen
+            ⚠️ Pon el código <strong>{group.code}</strong> en el comentario para que te identifiquen
           </p>
         </div>
 

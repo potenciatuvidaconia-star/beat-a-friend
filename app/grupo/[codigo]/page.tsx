@@ -39,6 +39,7 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
   const total = members?.length ?? 0
   const inviteUrl = `${process.env.NEXT_PUBLIC_APP_URL}/unirse/${codigo}`
 
+  const platformYappy = process.env.NEXT_PUBLIC_YAPPY_NUMBER ?? '507-XXXX-XXXX'
   const apodoPrimero: string = group.apodo_primero ?? 'El Profeta'
   const apodoUltimo: string = group.apodo_ultimo ?? 'El Ciego'
   const premioCastigo: string | null = group.premio_castigo ?? null
@@ -73,7 +74,7 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
             <div className="mt-3 bg-white rounded-xl p-3 text-xs space-y-1">
               <div className="flex justify-between">
                 <span className="text-gray-500">Número Yappy</span>
-                <span className="font-bold">{group.yappy_number}</span>
+                <span className="font-bold">{platformYappy}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-gray-500">Monto</span>
@@ -92,7 +93,7 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
           <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4">
             <p className="text-sm font-semibold text-yellow-700">💛 Recuerda mandar tu $1 por Yappy</p>
             <p className="text-xs text-gray-500 mt-1">
-              Al <strong>{group.yappy_number}</strong> con el código <strong className="font-mono">{codigo}</strong>
+              Al <strong>{platformYappy}</strong> con el código <strong className="font-mono">{codigo}</strong>
             </p>
           </div>
         )}
