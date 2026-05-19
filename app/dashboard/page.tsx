@@ -65,7 +65,7 @@ export default async function DashboardPage() {
       // Full ranking
       const { data: allMembers } = await supabase
         .from('group_members')
-        .select('user_id, points, profiles(display_name)')
+        .select('user_id, points, profiles(display_name, avatar_url)')
         .eq('group_id', m.group_id)
         .neq('status', 'banned')
         .order('points', { ascending: false })
@@ -114,6 +114,39 @@ export default async function DashboardPage() {
 
   const days = daysUntilWorldCup()
   const initial = (profile?.display_name ?? 'U')[0].toUpperCase()
+  const avatarUrl: string | null = profile?.avatar_url ?? null
+
+  // Personalized greeting based on overall position
+  const isLeadingAny = enriched.some(g => g.isFirst)
+  const isLosingAll = enriched.length > 0 && enriched.every(g => g.isLast)
+  const leaderGreetings = [
+    '¡Eres el rey! 👑 Que nadie te quite el trono.',
+    '🔥 Arriba en el marcador. Así se hace.',
+    '⚡ El Profeta ha llegado. Los demás, a sufrir.',
+    '🏆 Primero en todo. Que quede claro.',
+  ]
+  const loserGreetings = [
+    '😬 ¿Todo bien en casa? El sótano te espera.',
+    '🚧 Sigue intentándolo. El fútbol es así… o no.',
+    '📉 Las predicciones no son lo tuyo. Pero aquí seguimos.',
+    '💀 El grupo manda condolencias. Tú sabes.',
+  ]
+  const neutralGreetings = [
+    'Bienvenido de vuelta ⚽',
+    '¡A predecir se dijo! 🎯',
+    'El Mundial espera 🌍',
+  ]
+  function pickGreeting(arr: string[], seed: string) {
+    let h = 0
+    for (let i = 0; i < seed.length; i++) h = seed.charCodeAt(i) + ((h << 5) - h)
+    return arr[Math.abs(h) % arr.length]
+  }
+  const todaySeed = new Date().toDateString() + (profile?.id ?? '')
+  const greeting = isLeadingAny
+    ? pickGreeting(leaderGreetings, todaySeed)
+    : isLosingAll
+    ? pickGreeting(loserGreetings, todaySeed)
+    : pickGreeting(neutralGreetings, todaySeed)
 
   return (
     <div style={{ minHeight: '100vh', background: '#F0F2F8', paddingBottom: 96 }}>
@@ -142,22 +175,27 @@ export default async function DashboardPage() {
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 18 }}>
-            <div>
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,.45)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase' }}>
-                Bienvenido de vuelta
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{ fontSize: 11, color: isLeadingAny ? 'rgba(255,186,0,.7)' : isLosingAll ? 'rgba(255,92,92,.7)' : 'rgba(255,255,255,.45)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '.08em', textTransform: 'uppercase' }}>
+                {greeting}
               </p>
-              <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: '#fff', letterSpacing: '-0.02em', marginTop: 2 }}>
+              <h1 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 22, color: isLeadingAny ? '#FFBA00' : '#fff', letterSpacing: '-0.02em', marginTop: 2 }}>
                 {profile?.display_name}
               </h1>
             </div>
             <Link href="/perfil" style={{
-              width: 44, height: 44, borderRadius: '50%', textDecoration: 'none', flexShrink: 0,
-              background: 'linear-gradient(135deg, var(--bf-green) 0%, #008C4A 100%)',
+              width: 46, height: 46, borderRadius: '50%', textDecoration: 'none', flexShrink: 0,
+              background: avatarUrl ? 'transparent' : 'linear-gradient(135deg, var(--bf-green) 0%, #008C4A 100%)',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
+              overflow: 'hidden',
               fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, color: '#fff',
-              boxShadow: '0 4px 12px rgba(0,196,106,.4)',
+              boxShadow: isLeadingAny ? '0 0 0 3px #FFBA00, 0 4px 12px rgba(255,186,0,.5)' : '0 4px 12px rgba(0,196,106,.4)',
+              border: isLeadingAny ? '2px solid #FFBA00' : 'none',
             }}>
-              {initial}
+              {avatarUrl
+                ? <img src={avatarUrl} alt={profile?.display_name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                : initial
+              }
             </Link>
           </div>
 
@@ -269,24 +307,46 @@ export default async function DashboardPage() {
                   const isFst = pos === 1
                   const isLst = pos === m.total && m.total > 1
                   const name = member.profiles?.display_name ?? '?'
+                  const memberAvatar: string | null = member.profiles?.avatar_url ?? null
+                  const memberInitial = name[0].toUpperCase()
+                  const memberColor = (() => {
+                    const colors = ['#00C46A','#001F5B','#FFBA00','#FF5C5C','#7C3AED','#0EA5E9','#F97316','#10B981']
+                    let h = 0; for (let k = 0; k < member.user_id.length; k++) h = member.user_id.charCodeAt(k) + ((h << 5) - h)
+                    return colors[Math.abs(h) % colors.length]
+                  })()
+
+                  const MiniAvatar = ({ size }: { size: number }) => (
+                    <div style={{
+                      width: size, height: size, borderRadius: '50%', flexShrink: 0, overflow: 'hidden',
+                      background: memberAvatar ? 'transparent' : memberColor,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    }}>
+                      {memberAvatar
+                        ? <img src={memberAvatar} alt={name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                        : <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: size * 0.4, color: '#fff' }}>{memberInitial}</span>
+                      }
+                    </div>
+                  )
 
                   if (isFst) {
                     return (
-                      <div key={member.user_id} style={{
-                        background: 'linear-gradient(135deg, #FFBA00 0%, #E6A300 100%)',
+                      <div key={member.user_id} className="shimmer-gold" style={{
                         padding: '14px 18px', display: 'flex', alignItems: 'center', gap: 12,
                       }}>
-                        <div style={{
-                          width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
-                          background: 'rgba(255,255,255,.25)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 16, color: '#fff',
-                        }}>1</div>
+                        <div style={{ position: 'relative', flexShrink: 0 }}>
+                          <MiniAvatar size={40} />
+                          <div style={{
+                            position: 'absolute', bottom: -3, right: -3,
+                            width: 16, height: 16, borderRadius: '50%', background: '#fff',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            fontSize: 8, fontFamily: 'var(--font-display)', fontWeight: 800, color: '#E6A300',
+                          }}>1°</div>
+                        </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 15, color: '#fff' }}>
                             {name}{isMe && <span style={{ fontSize: 11, opacity: .7, marginLeft: 6 }}>(tú)</span>}
                           </p>
-                          <p style={{ fontSize: 11, color: 'rgba(255,255,255,.7)', marginTop: 1 }}>{apodoPrimero}</p>
+                          <p style={{ fontSize: 11, color: 'rgba(255,255,255,.75)', marginTop: 1 }}>⚡ {apodoPrimero}</p>
                         </div>
                         <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#fff' }}>
                           {member.points}<span style={{ fontSize: 11, fontWeight: 600, opacity: .7, marginLeft: 2 }}>pts</span>
@@ -298,23 +358,25 @@ export default async function DashboardPage() {
                   if (isLst) {
                     return (
                       <div key={member.user_id} style={{
-                        background: 'linear-gradient(135deg, #FF5C5C 0%, #E03E3E 100%)',
+                        background: 'linear-gradient(135deg, #2A0808 0%, #1F0505 100%)',
                         padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 12,
-                        borderTop: '1px solid rgba(255,255,255,.1)',
+                        borderTop: '1px solid rgba(255,92,92,.2)',
                       }}>
-                        <div style={{
-                          width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-                          background: 'rgba(255,255,255,.2)',
-                          display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, color: '#fff',
-                        }}>últ</div>
+                        <div style={{ position: 'relative', flexShrink: 0 }}>
+                          <MiniAvatar size={36} />
+                          <div style={{
+                            position: 'absolute', bottom: -3, right: -3,
+                            width: 14, height: 14, borderRadius: '50%', background: '#FF5C5C',
+                            display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8,
+                          }}>🚧</div>
+                        </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: '#fff' }}>
+                          <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: '#FF8C8C' }}>
                             {name}{isMe && <span style={{ fontSize: 11, opacity: .7, marginLeft: 6 }}>(tú)</span>}
                           </p>
-                          <p style={{ fontSize: 11, color: 'rgba(255,255,255,.7)', marginTop: 1 }}>{apodoUltimo}</p>
+                          <p style={{ fontSize: 11, color: 'rgba(255,140,140,.6)', marginTop: 1 }}>{apodoUltimo}</p>
                         </div>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#fff' }}>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#FF8C8C' }}>
                           {member.points}<span style={{ fontSize: 11, fontWeight: 600, opacity: .7, marginLeft: 2 }}>pts</span>
                         </p>
                       </div>
@@ -323,17 +385,22 @@ export default async function DashboardPage() {
 
                   return (
                     <div key={member.user_id} style={{
-                      padding: '11px 18px', display: 'flex', alignItems: 'center', gap: 12,
+                      padding: '10px 18px', display: 'flex', alignItems: 'center', gap: 12,
                       background: isMe ? 'rgba(0,196,106,.06)' : '#fff',
                       borderTop: '1px solid var(--bf-divider)',
                     }}>
-                      <div style={{
-                        width: 32, height: 32, borderRadius: '50%', flexShrink: 0,
-                        background: 'var(--bf-card-soft)', border: '1.5px solid var(--bf-border)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13,
-                        color: isMe ? 'var(--bf-green-dark)' : 'var(--bf-text-3)',
-                      }}>{pos}</div>
+                      <div style={{ position: 'relative', flexShrink: 0 }}>
+                        <MiniAvatar size={32} />
+                        <div style={{
+                          position: 'absolute', bottom: -2, right: -2,
+                          width: 14, height: 14, borderRadius: '50%',
+                          background: isMe ? 'var(--bf-green)' : 'var(--bf-card-soft)',
+                          border: `1.5px solid ${isMe ? 'var(--bf-green-soft)' : 'var(--bf-border)'}`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 8,
+                          color: isMe ? '#fff' : 'var(--bf-text-3)',
+                        }}>{pos}</div>
+                      </div>
                       <p style={{
                         flex: 1, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14,
                         color: 'var(--bf-text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',

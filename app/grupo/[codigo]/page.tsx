@@ -4,8 +4,17 @@ import Link from 'next/link'
 import { formatDeadline } from '@/lib/utils'
 import ShareButton from './ShareButton'
 import GroupChat from './GroupChat'
+import ZumbarButton from './ZumbarButton'
 import HeroBall from '@/app/components/HeroBall'
 import Wordmark from '@/app/components/Wordmark'
+
+/** Deterministic color from user_id string */
+function avatarColor(userId: string): string {
+  const colors = ['#00C46A','#001F5B','#FFBA00','#FF5C5C','#7C3AED','#0EA5E9','#F97316','#10B981']
+  let hash = 0
+  for (let i = 0; i < userId.length; i++) hash = userId.charCodeAt(i) + ((hash << 5) - hash)
+  return colors[Math.abs(hash) % colors.length]
+}
 
 export default async function GrupoPage({ params }: { params: Promise<{ codigo: string }> }) {
   const { codigo } = await params
@@ -224,28 +233,50 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
               const isMe = m.user_id === user.id
               const isFirst = pos === 1
               const isLast = pos === total && total > 1
+              const avatarUrl: string | null = m.profiles?.avatar_url ?? null
+              const displayName: string = m.profiles?.display_name ?? '?'
+              const initial = displayName[0].toUpperCase()
+              const color = avatarColor(m.user_id)
+
+              // Shared avatar element helper
+              const AvatarCircle = ({ size, border }: { size: number; border?: string }) => (
+                <div style={{
+                  width: size, height: size, borderRadius: '50%', flexShrink: 0,
+                  overflow: 'hidden', border: border ?? 'none',
+                  background: avatarUrl ? 'transparent' : color,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}>
+                  {avatarUrl
+                    ? <img src={avatarUrl} alt={displayName} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                    : <span style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: size * 0.38, color: '#fff' }}>{initial}</span>
+                  }
+                </div>
+              )
 
               if (isFirst) {
                 return (
-                  <div key={m.id} style={{
-                    background: 'linear-gradient(135deg, #FFBA00 0%, #E6A300 100%)',
+                  <div key={m.id} className="shimmer-gold" style={{
                     borderRadius: 20, padding: '16px 18px',
-                    boxShadow: '0 8px 24px rgba(255,186,0,.35)',
+                    boxShadow: '0 8px 24px rgba(255,186,0,.4)',
                     display: 'flex', alignItems: 'center', gap: 14,
                   }}>
-                    <div style={{
-                      width: 44, height: 44, borderRadius: '50%', flexShrink: 0,
-                      background: 'rgba(255,255,255,.25)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18, color: '#fff',
-                    }}>1</div>
+                    <div style={{ position: 'relative', flexShrink: 0 }}>
+                      <AvatarCircle size={52} border="3px solid rgba(255,255,255,.6)" />
+                      <div style={{
+                        position: 'absolute', bottom: -4, right: -4,
+                        width: 22, height: 22, borderRadius: '50%',
+                        background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 12, color: '#E6A300',
+                        boxShadow: '0 2px 6px rgba(0,0,0,.2)',
+                      }}>1°</div>
+                    </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: '#fff', lineHeight: 1 }}>
-                        {m.profiles.display_name}
+                        {displayName}
                         {isMe && <span style={{ fontSize: 12, opacity: .7, marginLeft: 6 }}>(tú)</span>}
                       </p>
-                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,.75)', marginTop: 3 }}>
-                        {apodoPrimero}
+                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,.8)', marginTop: 3 }}>
+                        ⚡ {apodoPrimero}
                       </p>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
@@ -258,30 +289,44 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
 
               if (isLast) {
                 return (
-                  <div key={m.id} style={{
-                    background: 'linear-gradient(135deg, #FF5C5C 0%, #E03E3E 100%)',
-                    borderRadius: 20, padding: '14px 18px',
-                    boxShadow: '0 6px 18px rgba(255,92,92,.3)',
-                    display: 'flex', alignItems: 'center', gap: 14,
-                  }}>
-                    <div style={{
-                      width: 40, height: 40, borderRadius: '50%', flexShrink: 0,
-                      background: 'rgba(255,255,255,.2)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 11, color: '#fff',
-                    }}>últ</div>
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: '#fff', lineHeight: 1 }}>
-                        {m.profiles.display_name}
-                        {isMe && <span style={{ fontSize: 12, opacity: .7, marginLeft: 6 }}>(tú)</span>}
+                  <div key={`sótano-${m.id}`} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {/* ZONA DEL SÓTANO divider */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ flex: 1, height: 1, background: 'rgba(255,92,92,.3)' }} />
+                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, color: '#FF5C5C', letterSpacing: '.15em', textTransform: 'uppercase' }}>
+                        🚧 Zona del Sótano 🚧
                       </p>
-                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,.75)', marginTop: 3 }}>
-                        {apodoUltimo}
-                      </p>
+                      <div style={{ flex: 1, height: 1, background: 'rgba(255,92,92,.3)' }} />
                     </div>
-                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#fff', lineHeight: 1 }}>{m.points}</p>
-                      <p style={{ fontSize: 11, color: 'rgba(255,255,255,.65)' }}>pts</p>
+                    <div style={{
+                      background: 'linear-gradient(135deg, #2A0808 0%, #1F0505 100%)',
+                      borderRadius: 20, padding: '14px 18px',
+                      boxShadow: '0 6px 18px rgba(255,92,92,.25)',
+                      border: '1.5px solid rgba(255,92,92,.4)',
+                      display: 'flex', alignItems: 'center', gap: 14,
+                    }}>
+                      <div style={{ position: 'relative', flexShrink: 0 }}>
+                        <AvatarCircle size={46} border="2px solid rgba(255,92,92,.5)" />
+                        <div style={{
+                          position: 'absolute', bottom: -4, right: -4,
+                          width: 20, height: 20, borderRadius: '50%',
+                          background: '#FF5C5C', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 11,
+                        }}>🚧</div>
+                      </div>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: '#FF8C8C', lineHeight: 1 }}>
+                          {displayName}
+                          {isMe && <span style={{ fontSize: 12, opacity: .7, marginLeft: 6 }}>(tú)</span>}
+                        </p>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: 'rgba(255,140,140,.7)', marginTop: 3 }}>
+                          {apodoUltimo}
+                        </p>
+                      </div>
+                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#FF8C8C', lineHeight: 1 }}>{m.points}</p>
+                        <p style={{ fontSize: 11, color: 'rgba(255,140,140,.5)' }}>pts</p>
+                      </div>
                     </div>
                   </div>
                 )
@@ -291,18 +336,24 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
                 <div key={m.id} style={{
                   background: isMe ? 'var(--bf-green-soft)' : '#fff',
                   border: `1.5px solid ${isMe ? 'rgba(0,196,106,.35)' : 'var(--bf-border)'}`,
-                  borderRadius: 16, padding: '12px 16px',
+                  borderRadius: 16, padding: '11px 14px',
                   display: 'flex', alignItems: 'center', gap: 12,
                 }}>
-                  <div style={{
-                    width: 36, height: 36, borderRadius: '50%', flexShrink: 0,
-                    background: 'var(--bf-card-soft)', border: '1.5px solid var(--bf-border)',
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 14, color: 'var(--bf-text-3)',
-                  }}>{pos}</div>
+                  <div style={{ position: 'relative', flexShrink: 0 }}>
+                    <AvatarCircle size={38} border="1.5px solid var(--bf-border)" />
+                    <div style={{
+                      position: 'absolute', bottom: -3, right: -3,
+                      width: 17, height: 17, borderRadius: '50%',
+                      background: isMe ? 'var(--bf-green)' : 'var(--bf-card-soft)',
+                      border: `1.5px solid ${isMe ? 'var(--bf-green-soft)' : 'var(--bf-border)'}`,
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 9,
+                      color: isMe ? '#fff' : 'var(--bf-text-3)',
+                    }}>{pos}</div>
+                  </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--bf-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                      {m.profiles.display_name}
+                      {displayName}
                       {isMe && <span style={{ fontSize: 11, color: 'var(--bf-text-3)', marginLeft: 4 }}>(tú)</span>}
                     </p>
                     {m.payment_status === 'pending' && (
@@ -318,6 +369,16 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
             })}
           </div>
         </div>
+
+        {/* ── ZUMBAR BUTTON (only when 2+ members) ─────── */}
+        {total > 1 && (
+          <ZumbarButton
+            groupId={group.id}
+            userId={user.id}
+            lastPlaceName={members?.[total - 1]?.profiles?.display_name ?? '?'}
+            apodoUltimo={apodoUltimo}
+          />
+        )}
 
         {/* ── PREDECIR CTA ──────────────────────────────── */}
         <Link
