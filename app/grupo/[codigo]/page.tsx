@@ -56,21 +56,21 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
   const premioCastigo: string | null = group.premio_castigo ?? null
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F0F2F8', paddingBottom: 96 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bf-bg)', paddingBottom: 96 }}>
 
       {/* ── HERO HEADER ─────────────────────────────────── */}
       <div style={{
-        background: 'linear-gradient(145deg, #001040 0%, #001F5B 55%, #002D80 100%)',
+        background: 'linear-gradient(160deg, #060612 0%, #0A0E28 50%, #0D1535 100%)',
         position: 'relative', overflow: 'hidden',
       }}>
         <div style={{ display: 'flex', height: 4 }}>
           <div style={{ flex: 1, background: '#CE1126' }} />
-          <div style={{ flex: 1, background: '#fff' }} />
+          <div style={{ flex: 1, background: 'rgba(255,255,255,.6)' }} />
           <div style={{ flex: 1, background: '#00C46A' }} />
         </div>
         <div style={{
           position: 'absolute', inset: 0, pointerEvents: 'none',
-          backgroundImage: 'repeating-linear-gradient(60deg, rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px, transparent 1px, transparent 22px), repeating-linear-gradient(-60deg, rgba(255,255,255,.04) 0px, rgba(255,255,255,.04) 1px, transparent 1px, transparent 22px)',
+          backgroundImage: 'repeating-linear-gradient(60deg, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px, transparent 1px, transparent 22px), repeating-linear-gradient(-60deg, rgba(255,255,255,.03) 0px, rgba(255,255,255,.03) 1px, transparent 1px, transparent 22px)',
         }} />
         <HeroBall size={220} opacity={0.06} />
 
@@ -142,11 +142,11 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
       </div>
 
       {/* ── CONTENT ─────────────────────────────────────── */}
-      <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 16px 20px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 16px 20px', display: 'flex', flexDirection: 'column', gap: 14, background: 'var(--bf-bg)' }}>
 
         {/* Warning banner */}
         {membership.status === 'warned' && membership.warning_deadline && (
-          <div style={{ background: '#fff', border: '2px solid var(--bf-coral)', borderRadius: 18, overflow: 'hidden' }}>
+          <div style={{ background: 'var(--bf-surface)', border: '1.5px solid var(--bf-coral)', borderRadius: 16, overflow: 'hidden' }}>
             <div style={{ background: 'var(--bf-coral)', padding: '10px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
               <div style={{ width: 20, height: 20, borderRadius: '50%', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <span style={{ color: 'var(--bf-coral)', fontSize: 12, fontWeight: 800 }}>!</span>
@@ -155,9 +155,9 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
             </div>
             <div style={{ padding: '12px 16px' }}>
               <p style={{ fontSize: 13, color: 'var(--bf-text-2)' }}>
-                No hemos recibido tu $1. Tienes <strong>{formatDeadline(membership.warning_deadline)}</strong> o serás removido.
+                No hemos recibido tu $1. Tienes <strong style={{ color: 'var(--bf-text)' }}>{formatDeadline(membership.warning_deadline)}</strong> o serás removido.
               </p>
-              <div style={{ marginTop: 10, background: '#F7F8FC', borderRadius: 12, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ marginTop: 10, background: 'var(--bf-surface-2)', borderRadius: 10, padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 6 }}>
                 {[
                   { label: 'Número Yappy', value: platformYappy },
                   { label: 'Monto', value: '$1.00', green: true },
@@ -175,12 +175,12 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
 
         {/* Soft payment reminder */}
         {membership.payment_status === 'pending' && membership.status !== 'warned' && (
-          <div style={{ background: '#FFFBEB', border: '1.5px solid #FDE68A', borderRadius: 16, padding: '12px 16px' }}>
-            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: '#7B5800' }}>
+          <div style={{ background: 'rgba(255,186,0,.07)', border: '1px solid rgba(255,186,0,.25)', borderRadius: 14, padding: '12px 16px' }}>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: '#FFBA00' }}>
               Recuerda enviar tu $1 por Yappy
             </p>
             <p style={{ fontSize: 12, color: 'var(--bf-text-3)', marginTop: 3 }}>
-              Al <strong style={{ color: 'var(--bf-text)' }}>{platformYappy}</strong>{' '}· código <strong style={{ fontFamily: 'monospace' }}>{codigo}</strong>
+              Al <strong style={{ color: 'var(--bf-text)' }}>{platformYappy}</strong>{' '}· código <strong style={{ fontFamily: 'monospace', color: 'var(--bf-text-2)' }}>{codigo}</strong>
             </p>
           </div>
         )}
@@ -254,18 +254,18 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
               if (isFirst) {
                 return (
                   <div key={m.id} className="shimmer-gold" style={{
-                    borderRadius: 20, padding: '16px 18px',
-                    boxShadow: '0 8px 24px rgba(255,186,0,.4)',
+                    borderRadius: 18, padding: '16px 18px',
+                    boxShadow: '0 8px 32px rgba(255,186,0,.45)',
                     display: 'flex', alignItems: 'center', gap: 14,
                   }}>
                     <div style={{ position: 'relative', flexShrink: 0 }}>
-                      <AvatarCircle size={52} border="3px solid rgba(255,255,255,.6)" />
+                      <AvatarCircle size={52} border="3px solid rgba(255,255,255,.7)" />
                       <div style={{
                         position: 'absolute', bottom: -4, right: -4,
                         width: 22, height: 22, borderRadius: '50%',
                         background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 12, color: '#E6A300',
-                        boxShadow: '0 2px 6px rgba(0,0,0,.2)',
+                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 11, color: '#E6A300',
+                        boxShadow: '0 2px 8px rgba(0,0,0,.3)',
                       }}>1°</div>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
@@ -278,8 +278,8 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
                       </p>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 28, color: '#fff', lineHeight: 1 }}>{m.points}</p>
-                      <p style={{ fontSize: 11, color: 'rgba(255,255,255,.65)' }}>pts</p>
+                      <p className="score score-lg" style={{ color: '#fff' }}>{m.points}</p>
+                      <p style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', letterSpacing: '.08em', textTransform: 'uppercase', marginTop: 1 }}>pts</p>
                     </div>
                   </div>
                 )
@@ -288,7 +288,6 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
               if (isLast) {
                 return (
                   <div key={`sótano-${m.id}`} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    {/* Show Muro header here only when shame = 1 (last is the only shame entry) */}
                     {showMuroHeader && (
                       <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 4 }}>
                         <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(255,92,92,.5), transparent)' }} />
@@ -300,40 +299,47 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
                     )}
                     {/* ZONA DEL SÓTANO divider */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <div style={{ flex: 1, height: 1, background: 'rgba(255,92,92,.3)' }} />
-                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, color: '#FF5C5C', letterSpacing: '.15em', textTransform: 'uppercase' }}>
+                      <div style={{ flex: 1, height: 1, background: 'rgba(206,17,38,.5)' }} />
+                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, color: '#CE1126', letterSpacing: '.15em', textTransform: 'uppercase' }}>
                         🚧 Zona del Sótano 🚧
                       </p>
-                      <div style={{ flex: 1, height: 1, background: 'rgba(255,92,92,.3)' }} />
+                      <div style={{ flex: 1, height: 1, background: 'rgba(206,17,38,.5)' }} />
                     </div>
-                    <div style={{
-                      background: 'linear-gradient(135deg, #2A0808 0%, #1F0505 100%)',
-                      borderRadius: 20, padding: '14px 18px',
-                      boxShadow: '0 6px 18px rgba(255,92,92,.25)',
-                      border: '1.5px solid rgba(255,92,92,.4)',
-                      display: 'flex', alignItems: 'center', gap: 14,
-                    }}>
+                    <div className="sotano-card" style={{ padding: '16px 18px', display: 'flex', alignItems: 'center', gap: 14 }}>
                       <div style={{ position: 'relative', flexShrink: 0 }}>
-                        <AvatarCircle size={46} border="2px solid rgba(255,92,92,.5)" />
+                        {/* Avatar con grayscale — ver tu foto en blanco y negro duele más */}
+                        <div className="sotano-avatar">
+                          <AvatarCircle size={50} border="2px solid rgba(255,92,92,.4)" />
+                        </div>
                         <div style={{
                           position: 'absolute', bottom: -4, right: -4,
                           width: 20, height: 20, borderRadius: '50%',
-                          background: '#FF5C5C', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontSize: 11,
+                          background: '#CE1126', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 10,
                         }}>🚧</div>
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: '#FF8C8C', lineHeight: 1 }}>
                           {displayName}
-                          {isMe && <span style={{ fontSize: 12, opacity: .7, marginLeft: 6 }}>(tú)</span>}
+                          {isMe && <span style={{ fontSize: 12, opacity: .6, marginLeft: 6 }}>(tú)</span>}
                         </p>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: 'rgba(255,140,140,.7)', marginTop: 3 }}>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 11, color: 'rgba(255,120,120,.6)', marginTop: 3 }}>
                           {apodoUltimo}
                         </p>
                       </div>
-                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#FF8C8C', lineHeight: 1 }}>{m.points}</p>
-                        <p style={{ fontSize: 11, color: 'rgba(255,140,140,.5)' }}>pts</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+                        <div style={{ textAlign: 'right' }}>
+                          <p className="score score-md neon-red">{m.points}</p>
+                          <p style={{ fontSize: 9, color: 'rgba(255,120,120,.5)', letterSpacing: '.06em', textTransform: 'uppercase' }}>pts</p>
+                        </div>
+                        {/* Micro ZumbarButton — ícono de rayo */}
+                        <ZumbarButton
+                          groupId={group.id}
+                          userId={user.id}
+                          lastPlaceName={displayName}
+                          apodoUltimo={apodoUltimo}
+                          inline
+                        />
                       </div>
                     </div>
                   </div>
@@ -354,34 +360,34 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
                       </div>
                     )}
                     <div style={{
-                      background: 'rgba(255,92,92,.07)',
-                      border: '1.5px solid rgba(255,92,92,.25)',
-                      borderRadius: 16, padding: '11px 14px',
+                      background: 'rgba(255,40,40,.06)',
+                      border: '1px solid rgba(255,92,92,.2)',
+                      borderRadius: 14, padding: '11px 14px',
                       display: 'flex', alignItems: 'center', gap: 12,
                     }}>
                       <div style={{ position: 'relative', flexShrink: 0 }}>
-                        <AvatarCircle size={38} border="1.5px solid rgba(255,92,92,.3)" />
+                        <div style={{ filter: 'grayscale(60%) brightness(0.8)' }}>
+                          <AvatarCircle size={38} border="1px solid rgba(255,92,92,.25)" />
+                        </div>
                         <div style={{
-                          position: 'absolute', bottom: -3, right: -3,
-                          width: 17, height: 17, borderRadius: '50%',
-                          background: 'rgba(255,92,92,.2)',
-                          border: '1.5px solid rgba(255,92,92,.3)',
+                          position: 'absolute', bottom: -3, right: -3, width: 16, height: 16, borderRadius: '50%',
+                          background: 'rgba(255,60,60,.25)', border: '1px solid rgba(255,92,92,.4)',
                           display: 'flex', alignItems: 'center', justifyContent: 'center',
-                          fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 9, color: '#E03E3E',
+                          fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 8, color: '#FF8C8C',
                         }}>{pos}</div>
                       </div>
                       <div style={{ flex: 1, minWidth: 0 }}>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--bf-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'rgba(255,140,140,.9)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                           {displayName}
-                          {isMe && <span style={{ fontSize: 11, color: 'var(--bf-text-3)', marginLeft: 4 }}>(tú)</span>}
+                          {isMe && <span style={{ fontSize: 10, opacity: .6, marginLeft: 4 }}>(tú)</span>}
                         </p>
-                        <p style={{ fontSize: 10, color: '#E03E3E', fontWeight: 600, marginTop: 2 }}>
+                        <p style={{ fontSize: 10, color: 'rgba(255,80,80,.5)', fontFamily: 'var(--font-display)', fontWeight: 600, marginTop: 2 }}>
                           😬 zona de peligro
                         </p>
                       </div>
                       <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#E03E3E' }}>{m.points}</p>
-                        <p style={{ fontSize: 10, color: 'rgba(224,62,62,.6)' }}>pts</p>
+                        <p className="score score-sm" style={{ color: '#FF8C8C' }}>{m.points}</p>
+                        <p style={{ fontSize: 9, color: 'rgba(255,120,120,.4)', textTransform: 'uppercase', letterSpacing: '.06em' }}>pts</p>
                       </div>
                     </div>
                   </div>
@@ -400,20 +406,19 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
                     </div>
                   )}
                   <div style={{
-                    background: isMe ? 'var(--bf-green-soft)' : '#fff',
-                    border: `1.5px solid ${isMe ? 'rgba(0,196,106,.35)' : 'var(--bf-border)'}`,
-                    borderRadius: 16, padding: '11px 14px',
+                    background: isMe ? 'rgba(0,196,106,.08)' : 'var(--bf-surface)',
+                    border: `1px solid ${isMe ? 'rgba(0,196,106,.2)' : 'var(--bf-border)'}`,
+                    borderRadius: 14, padding: '11px 14px',
                     display: 'flex', alignItems: 'center', gap: 12,
                   }}>
                     <div style={{ position: 'relative', flexShrink: 0 }}>
-                      <AvatarCircle size={38} border="1.5px solid var(--bf-border)" />
+                      <AvatarCircle size={38} border="1px solid var(--bf-border)" />
                       <div style={{
-                        position: 'absolute', bottom: -3, right: -3,
-                        width: 17, height: 17, borderRadius: '50%',
-                        background: isMe ? 'var(--bf-green)' : 'var(--bf-card-soft)',
-                        border: `1.5px solid ${isMe ? 'var(--bf-green-soft)' : 'var(--bf-border)'}`,
+                        position: 'absolute', bottom: -3, right: -3, width: 16, height: 16, borderRadius: '50%',
+                        background: isMe ? 'var(--bf-green)' : 'var(--bf-surface-2)',
+                        border: `1px solid ${isMe ? 'rgba(0,196,106,.4)' : 'var(--bf-border)'}`,
                         display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 9,
+                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 8,
                         color: isMe ? '#fff' : 'var(--bf-text-3)',
                       }}>{pos}</div>
                     </div>
@@ -423,12 +428,12 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
                         {isMe && <span style={{ fontSize: 11, color: 'var(--bf-text-3)', marginLeft: 4 }}>(tú)</span>}
                       </p>
                       {m.payment_status === 'pending' && (
-                        <p style={{ fontSize: 10, color: '#7B5800', fontWeight: 600, marginTop: 2 }}>pago pendiente</p>
+                        <p style={{ fontSize: 10, color: '#FFBA00', fontWeight: 600, marginTop: 2 }}>pago pendiente</p>
                       )}
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: isMe ? 'var(--bf-green-dark)' : 'var(--bf-text)' }}>{m.points}</p>
-                      <p style={{ fontSize: 10, color: 'var(--bf-text-3)' }}>pts</p>
+                      <p className="score score-sm" style={{ color: isMe ? 'var(--bf-green)' : 'var(--bf-text)' }}>{m.points}</p>
+                      <p style={{ fontSize: 9, color: 'var(--bf-text-3)', textTransform: 'uppercase', letterSpacing: '.06em' }}>pts</p>
                     </div>
                   </div>
                 </div>
@@ -437,15 +442,6 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
           </div>
         </div>
 
-        {/* ── ZUMBAR BUTTON (only when 2+ members) ─────── */}
-        {total > 1 && (
-          <ZumbarButton
-            groupId={group.id}
-            userId={user.id}
-            lastPlaceName={members?.[total - 1]?.profiles?.display_name ?? '?'}
-            apodoUltimo={apodoUltimo}
-          />
-        )}
 
         {/* ── PREDECIR CTA ──────────────────────────────── */}
         <Link
@@ -529,8 +525,8 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
       {/* ── BOTTOM NAV ───────────────────────────────────── */}
       <nav style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: 'rgba(255,255,255,.96)', backdropFilter: 'blur(12px)',
-        borderTop: '1px solid var(--bf-divider)',
+        background: 'rgba(10,10,12,.97)', backdropFilter: 'blur(16px)',
+        borderTop: '1px solid var(--bf-border)',
         padding: '8px 8px 26px', display: 'flex', justifyContent: 'space-around',
       }}>
         {[
@@ -541,7 +537,8 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
         ].map(tab => (
           <Link key={tab.href} href={tab.href} style={{
             flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
-            textDecoration: 'none', color: tab.active ? 'var(--bf-navy)' : 'var(--bf-text-3)',
+            textDecoration: 'none',
+            color: tab.active ? 'var(--bf-green)' : 'var(--bf-text-3)',
             padding: '4px 2px',
           }}>
             <svg width="20" height="20" viewBox="0 0 22 22" fill="none">{tab.icon}</svg>

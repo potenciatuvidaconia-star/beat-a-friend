@@ -110,11 +110,11 @@ export default async function MundialPage() {
   const totalGroupMatches = groupMatches.length
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F0F2F8', paddingBottom: 96 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bf-bg)', paddingBottom: 96 }}>
 
       {/* ── HEADER ───────────────────────────────────────── */}
       <div style={{
-        background: 'linear-gradient(145deg, #001040 0%, #001F5B 55%, #002D80 100%)',
+        background: 'linear-gradient(160deg, #060612 0%, #0A0E28 50%, #0D1535 100%)',
         position: 'relative', overflow: 'hidden',
       }}>
         <div style={{
@@ -124,7 +124,7 @@ export default async function MundialPage() {
         <HeroBall size={200} opacity={0.07} />
         <div style={{ display: 'flex', height: 4 }}>
           <div style={{ flex: 1, background: '#CE1126' }} />
-          <div style={{ flex: 1, background: '#fff' }} />
+          <div style={{ flex: 1, background: 'rgba(255,255,255,.6)' }} />
           <div style={{ flex: 1, background: '#00C46A' }} />
         </div>
 
@@ -163,7 +163,7 @@ export default async function MundialPage() {
       </div>
 
       {/* ── GROUPS GRID ──────────────────────────────────── */}
-      <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 14 }}>
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 12px', display: 'flex', flexDirection: 'column', gap: 14, background: 'var(--bf-bg)' }}>
 
         {/* Legend */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 14, padding: '8px 12px', background: 'var(--bf-card)', borderRadius: 12, border: '1px solid var(--bf-border)' }}>
@@ -185,10 +185,9 @@ export default async function MundialPage() {
 
           return (
             <div key={groupLetter} style={{
-              background: 'var(--bf-card)', borderRadius: 20,
+              background: 'var(--bf-surface)', borderRadius: 16,
               border: '1px solid var(--bf-border)',
               overflow: 'hidden',
-              boxShadow: '0 2px 12px rgba(0,31,91,.06)',
             }}>
               {/* Group header */}
               <div style={{
@@ -222,13 +221,13 @@ export default async function MundialPage() {
                 display: 'grid',
                 gridTemplateColumns: '1fr 28px 28px 28px 28px 28px 36px',
                 padding: '8px 14px',
-                background: '#F7F8FC',
+                background: 'var(--bf-surface-2)',
                 borderBottom: '1px solid var(--bf-divider)',
               }}>
                 {['Equipo', 'PJ', 'PG', 'PE', 'PP', 'DIF', 'PTS'].map((col, i) => (
                   <p key={col} style={{
                     fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 700,
-                    color: col === 'PTS' ? 'var(--bf-navy)' : 'var(--bf-text-3)',
+                    color: col === 'PTS' ? 'var(--bf-green)' : 'var(--bf-text-3)',
                     textAlign: i > 0 ? 'center' : 'left',
                     letterSpacing: '.04em',
                   }}>{col}</p>
@@ -247,7 +246,7 @@ export default async function MundialPage() {
                     padding: '10px 14px',
                     alignItems: 'center',
                     borderBottom: idx < teams.length - 1 ? '1px solid var(--bf-divider)' : 'none',
-                    background: qualifies ? 'rgba(0,196,106,.04)' : mayQualify ? 'rgba(255,186,0,.04)' : '#fff',
+                    background: qualifies ? 'rgba(0,196,106,.06)' : mayQualify ? 'rgba(255,186,0,.05)' : 'transparent',
                   }}>
                     {/* Team name */}
                     <div style={{ display: 'flex', alignItems: 'center', gap: 8, minWidth: 0 }}>
@@ -299,7 +298,7 @@ export default async function MundialPage() {
 
               {/* Next matches preview */}
               {nextMatches.length > 0 && (
-                <div style={{ background: '#F7F8FC', borderTop: '1px solid var(--bf-divider)', padding: '10px 14px' }}>
+                <div style={{ background: 'var(--bf-surface-2)', borderTop: '1px solid var(--bf-divider)', padding: '10px 14px' }}>
                   <p style={{ fontSize: 10, color: 'var(--bf-text-3)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '.06em', textTransform: 'uppercase', marginBottom: 8 }}>
                     Próximos partidos
                   </p>
@@ -343,7 +342,7 @@ export default async function MundialPage() {
       {/* ── BOTTOM NAV ───────────────────────────────────── */}
       <nav style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: 'rgba(255,255,255,.96)', backdropFilter: 'blur(12px)',
+        background: 'rgba(10,10,12,.97)', backdropFilter: 'blur(16px)',
         borderTop: '1px solid var(--bf-divider)',
         padding: '8px 8px 26px', display: 'flex', justifyContent: 'space-around',
       }}>
@@ -355,7 +354,7 @@ export default async function MundialPage() {
         ] as { href: string; label: string; active: boolean; icon: React.ReactNode }[]).map(tab => (
           <Link key={tab.href + tab.label} href={tab.href} style={{
             flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
-            textDecoration: 'none', color: tab.active ? 'var(--bf-navy)' : 'var(--bf-text-3)',
+            textDecoration: 'none', color: tab.active ? 'var(--bf-green)' : 'var(--bf-text-3)',
             padding: '4px 2px',
           }}>
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none">{tab.icon}</svg>

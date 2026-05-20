@@ -161,7 +161,7 @@ export default async function DashboardPage() {
     : pickGreeting(neutralGreetings, todaySeed)
 
   return (
-    <div style={{ minHeight: '100vh', background: '#F0F2F8', paddingBottom: 96 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bf-bg)', paddingBottom: 96 }}>
 
       {/* ── HERO ─────────────────────────────────────────── */}
       <div style={{
@@ -246,12 +246,12 @@ export default async function DashboardPage() {
       </div>
 
       {/* ── CONTENT ──────────────────────────────────────── */}
-      <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 16px 20px', display: 'flex', flexDirection: 'column', gap: 20 }}>
+      <div style={{ maxWidth: 480, margin: '0 auto', padding: '16px 16px 20px', display: 'flex', flexDirection: 'column', gap: 20, background: 'var(--bf-bg)' }}>
 
         {/* ── EMPTY STATE ──────────────────────────────────── */}
         {enriched.length === 0 && (
           <div style={{
-            background: 'var(--bf-card)', borderRadius: 20, padding: '36px 24px',
+            background: 'var(--bf-surface)', borderRadius: 18, padding: '36px 24px',
             textAlign: 'center', border: '1px dashed var(--bf-border)',
           }}>
             <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: 'var(--bf-text)' }}>
@@ -308,10 +308,10 @@ export default async function DashboardPage() {
 
               {/* ── RANKING ─────────────────────────────────── */}
               <div style={{
-                background: 'var(--bf-card)', borderRadius: 18,
-                border: '1.5px solid var(--bf-border)',
+                background: 'var(--bf-surface)',
+                borderRadius: 16,
+                border: '1px solid var(--bf-border)',
                 overflow: 'hidden',
-                boxShadow: 'var(--bf-shadow-sm)',
               }}>
                 {m.allMembers.map((member: any, i: number) => {
                   const pos = i + 1
@@ -370,27 +370,27 @@ export default async function DashboardPage() {
                   if (isLst) {
                     return (
                       <div key={member.user_id} style={{
-                        background: 'linear-gradient(135deg, #2A0808 0%, #1F0505 100%)',
+                        background: 'linear-gradient(135deg, #0F0505 0%, #180808 100%)',
                         padding: '12px 18px', display: 'flex', alignItems: 'center', gap: 12,
-                        borderTop: '1px solid rgba(255,92,92,.2)',
+                        borderTop: '1px solid rgba(206,17,38,.3)',
                       }}>
                         <div style={{ position: 'relative', flexShrink: 0 }}>
-                          <MiniAvatar size={36} />
+                          <div style={{ filter: 'grayscale(100%) brightness(0.65)' }}>
+                            <MiniAvatar size={36} />
+                          </div>
                           <div style={{
                             position: 'absolute', bottom: -3, right: -3,
-                            width: 14, height: 14, borderRadius: '50%', background: '#FF5C5C',
+                            width: 14, height: 14, borderRadius: '50%', background: '#CE1126',
                             display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 8,
                           }}>🚧</div>
                         </div>
                         <div style={{ flex: 1, minWidth: 0 }}>
                           <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: '#FF8C8C' }}>
-                            {name}{isMe && <span style={{ fontSize: 11, opacity: .7, marginLeft: 6 }}>(tú)</span>}
+                            {name}{isMe && <span style={{ fontSize: 11, opacity: .6, marginLeft: 6 }}>(tú)</span>}
                           </p>
-                          <p style={{ fontSize: 11, color: 'rgba(255,140,140,.6)', marginTop: 1 }}>{apodoUltimo}</p>
+                          <p style={{ fontSize: 10, color: 'rgba(255,120,120,.5)', marginTop: 1 }}>{apodoUltimo}</p>
                         </div>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 20, color: '#FF8C8C' }}>
-                          {member.points}<span style={{ fontSize: 11, fontWeight: 600, opacity: .7, marginLeft: 2 }}>pts</span>
-                        </p>
+                        <p className="score score-sm neon-red">{member.points}<span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 600, opacity: .6, marginLeft: 3 }}>pts</span></p>
                       </div>
                     )
                   }
@@ -398,7 +398,7 @@ export default async function DashboardPage() {
                   return (
                     <div key={member.user_id} style={{
                       padding: '10px 18px', display: 'flex', alignItems: 'center', gap: 12,
-                      background: isMe ? 'rgba(0,196,106,.06)' : '#fff',
+                      background: isMe ? 'rgba(0,196,106,.07)' : 'transparent',
                       borderTop: '1px solid var(--bf-divider)',
                     }}>
                       <div style={{ position: 'relative', flexShrink: 0 }}>
@@ -419,11 +419,8 @@ export default async function DashboardPage() {
                       }}>
                         {name}{isMe && <span style={{ fontSize: 11, color: 'var(--bf-text-3)', marginLeft: 4 }}>(tú)</span>}
                       </p>
-                      <p style={{
-                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 18,
-                        color: isMe ? 'var(--bf-green-dark)' : 'var(--bf-text)',
-                      }}>
-                        {member.points}<span style={{ fontSize: 11, fontWeight: 600, color: 'var(--bf-text-3)', marginLeft: 2 }}>pts</span>
+                      <p className="score score-sm" style={{ color: isMe ? 'var(--bf-green)' : 'var(--bf-text)' }}>
+                        {member.points}<span style={{ fontSize: 10, fontFamily: 'var(--font-display)', fontWeight: 600, color: 'var(--bf-text-3)', marginLeft: 2 }}>pts</span>
                       </p>
                     </div>
                   )
@@ -433,14 +430,14 @@ export default async function DashboardPage() {
               {/* ── HOY ─────────────────────────────────────── */}
               {m.hasDailyData && (
                 <div style={{
-                  background: 'var(--bf-card)', borderRadius: 18,
-                  border: '1.5px solid var(--bf-border)',
+                  background: 'var(--bf-surface)', borderRadius: 16,
+                  border: '1px solid var(--bf-border)',
                   overflow: 'hidden',
                 }}>
                   {/* Header */}
                   <div style={{
                     padding: '10px 16px',
-                    background: 'linear-gradient(90deg, rgba(0,31,91,.04) 0%, transparent 100%)',
+                    background: 'rgba(0,196,106,.04)',
                     borderBottom: '1px solid var(--bf-divider)',
                     display: 'flex', alignItems: 'center', gap: 8,
                   }}>
@@ -564,10 +561,9 @@ export default async function DashboardPage() {
                 href={`/grupo/${m.groups.code}/predicciones`}
                 style={{
                   display: 'flex', alignItems: 'center', gap: 12,
-                  padding: '14px 18px', borderRadius: 16,
-                  background: '#fff', border: '1.5px solid var(--bf-border)',
+                  padding: '14px 18px', borderRadius: 14,
+                  background: 'var(--bf-surface-2)', border: '1px solid var(--bf-border)',
                   textDecoration: 'none',
-                  boxShadow: 'var(--bf-shadow-sm)',
                 }}
               >
                 <div style={{
@@ -582,7 +578,7 @@ export default async function DashboardPage() {
                     <circle cx="9" cy="9" r="2.5" fill="rgba(255,255,255,.3)"/>
                   </svg>
                 </div>
-                <p style={{ flex: 1, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--bf-text)' }}>
+                <p style={{ flex: 1, fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 14, color: 'var(--bf-text-2)' }}>
                   Ver partidos y predecir
                 </p>
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
@@ -623,8 +619,8 @@ export default async function DashboardPage() {
       {/* ── BOTTOM NAV ───────────────────────────────────── */}
       <nav style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: 'rgba(255,255,255,.96)', backdropFilter: 'blur(12px)',
-        borderTop: '1px solid var(--bf-divider)',
+        background: 'rgba(10,10,12,.97)', backdropFilter: 'blur(16px)',
+        borderTop: '1px solid var(--bf-border)',
         padding: '8px 8px 26px', display: 'flex', justifyContent: 'space-around',
       }}>
         {[
@@ -635,7 +631,8 @@ export default async function DashboardPage() {
         ].map(tab => (
           <Link key={tab.label} href={tab.href} style={{
             flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2,
-            textDecoration: 'none', color: tab.active ? 'var(--bf-navy)' : 'var(--bf-text-3)',
+            textDecoration: 'none',
+            color: tab.active ? 'var(--bf-green)' : 'var(--bf-text-3)',
             padding: '4px 2px',
           }}>
             <svg width="22" height="22" viewBox="0 0 22 22" fill="none">{tab.icon}</svg>

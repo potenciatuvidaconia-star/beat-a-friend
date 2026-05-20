@@ -53,7 +53,7 @@ export default async function PerfilPage() {
   const loserApodo = groupsWithRank.find(g => g.isLast)?.groups?.apodo_ultimo ?? 'El Ciego'
 
   return (
-    <div style={{ minHeight: '100vh', background: isLeadingAny ? '#0A0A18' : isLosingAll ? '#0F0A0A' : '#F0F2F8', paddingBottom: 96 }}>
+    <div style={{ minHeight: '100vh', background: 'var(--bf-bg)', paddingBottom: 96 }}>
 
       {/* ── HERO ────────────────────────────────────────── */}
       <div style={{
@@ -155,10 +155,7 @@ export default async function PerfilPage() {
                 background: 'rgba(255,255,255,.07)', borderRadius: 14, padding: '12px 8px', textAlign: 'center',
                 border: s.accent ? `1px solid ${s.accent}33` : 'none',
               }}>
-                <p style={{
-                  fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24,
-                  color: s.accent ?? '#fff', lineHeight: 1,
-                }}>{s.val}</p>
+                <p className="score score-md" style={{ color: s.accent ?? '#fff' }}>{s.val}</p>
                 <p style={{ fontSize: 10, color: 'rgba(255,255,255,.45)', marginTop: 3 }}>{s.label}</p>
               </div>
             ))}
@@ -174,8 +171,8 @@ export default async function PerfilPage() {
         </p>
 
         {groupsWithRank.length === 0 ? (
-          <div style={{ background: isLeadingAny ? 'rgba(255,255,255,.06)' : 'var(--bf-card)', borderRadius: 18, padding: '32px 20px', textAlign: 'center', border: '1px solid rgba(255,255,255,.1)' }}>
-            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: isLeadingAny ? '#fff' : 'var(--bf-text-2)' }}>Todavía no estás en ningún grupo</p>
+          <div style={{ background: 'var(--bf-surface)', borderRadius: 16, padding: '32px 20px', textAlign: 'center', border: '1px solid var(--bf-border)' }}>
+            <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: 'var(--bf-text-2)' }}>Todavía no estás en ningún grupo</p>
             <Link href="/crear-grupo" style={{ display: 'inline-block', marginTop: 14, padding: '10px 22px', borderRadius: 999, background: 'var(--bf-green)', color: '#fff', fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, textDecoration: 'none' }}>
               Crear grupo →
             </Link>
@@ -188,10 +185,8 @@ export default async function PerfilPage() {
                 : m.isLast
                 ? m.groups.apodo_ultimo ?? 'El Ciego'
                 : null
-              const accentColor = m.isFirst ? '#FFBA00' : m.isLast ? '#FF5C5C' : isLeadingAny || isLosingAll ? 'rgba(255,255,255,.7)' : 'var(--bf-navy)'
-              const cardBg = isLeadingAny || isLosingAll
-                ? (m.isFirst ? 'rgba(255,186,0,.12)' : m.isLast ? 'rgba(255,92,92,.1)' : 'rgba(255,255,255,.05)')
-                : 'var(--bf-card)'
+              const accentColor = m.isFirst ? '#FFBA00' : m.isLast ? '#FF5C5C' : 'var(--bf-text-2)'
+              const cardBg = m.isFirst ? 'rgba(255,186,0,.1)' : m.isLast ? 'rgba(255,40,40,.08)' : 'var(--bf-surface)'
 
               return (
                 <Link
@@ -220,7 +215,7 @@ export default async function PerfilPage() {
                   </div>
 
                   <div style={{ flex: 1, minWidth: 0 }}>
-                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: isLeadingAny || isLosingAll ? '#fff' : 'var(--bf-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 15, color: 'var(--bf-text)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {m.groups.name}
                     </p>
                     {apodo && (
@@ -261,9 +256,9 @@ export default async function PerfilPage() {
       {/* ── BOTTOM NAV ──────────────────────────────────────── */}
       <nav style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: isLeadingAny ? 'rgba(10,10,24,.97)' : isLosingAll ? 'rgba(15,10,10,.97)' : 'rgba(255,255,255,.96)',
-        backdropFilter: 'blur(12px)',
-        borderTop: `1px solid ${isLeadingAny || isLosingAll ? 'rgba(255,255,255,.08)' : 'var(--bf-divider)'}`,
+        background: 'rgba(10,10,12,.97)',
+        backdropFilter: 'blur(16px)',
+        borderTop: '1px solid var(--bf-border)',
         padding: '8px 8px 26px', display: 'flex', justifyContent: 'space-around',
       }}>
         {[
