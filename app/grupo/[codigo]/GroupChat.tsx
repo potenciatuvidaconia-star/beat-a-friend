@@ -87,23 +87,23 @@ export default function GroupChat({ groupId, currentUserId, initialMessages }: G
         <div style={{ flex: 1, height: 1, background: 'linear-gradient(270deg, rgba(0,196,106,.35), transparent)' }} />
       </div>
 
-      {/* ── Messages — open flow, no box */}
-      <div>
+      {/* ── Messages — slate container for contrast */}
+      <div className="chat-area">
         {/* Messages */}
         <div style={{
           height: 260, overflowY: 'auto',
-          padding: '4px 2px 10px',
+          padding: '14px 12px 8px',
           display: 'flex', flexDirection: 'column', gap: 10,
         }}>
           {messages.length === 0 ? (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: .5 }}>
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: .55, paddingTop: 60 }}>
               <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
-                <path d="M4 4h20a2 2 0 012 2v11a2 2 0 01-2 2H8l-6 4V6a2 2 0 012-2z" stroke="var(--bf-text-3)" strokeWidth="1.6" strokeLinejoin="round"/>
+                <path d="M4 4h20a2 2 0 012 2v11a2 2 0 01-2 2H8l-6 4V6a2 2 0 012-2z" stroke="rgba(255,255,255,.4)" strokeWidth="1.6" strokeLinejoin="round"/>
               </svg>
-              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'var(--bf-text-2)', textAlign: 'center' }}>
+              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 13, color: 'rgba(255,255,255,.5)', textAlign: 'center' }}>
                 Nadie ha dicho nada todavía
               </p>
-              <p style={{ fontSize: 11, color: 'var(--bf-text-3)', textAlign: 'center' }}>Sé el primero en soltar el trash talk</p>
+              <p style={{ fontSize: 11, color: 'rgba(255,255,255,.3)', textAlign: 'center' }}>Sé el primero en soltar el trash talk</p>
             </div>
           ) : (
             messages.map((msg, i) => {
@@ -132,7 +132,7 @@ export default function GroupChat({ groupId, currentUserId, initialMessages }: G
 
                   <div style={{ maxWidth: '76%', display: 'flex', flexDirection: 'column', gap: 2, alignItems: isMe ? 'flex-end' : 'flex-start' }}>
                     {!isMe && !sameAuthor && (
-                      <p style={{ fontSize: 9, fontFamily: 'var(--font-display)', fontWeight: 700, color: color, paddingLeft: 4, letterSpacing: '.04em', opacity: .85 }}>
+                      <p style={{ fontSize: 9, fontFamily: 'var(--font-display)', fontWeight: 800, color: color, paddingLeft: 4, letterSpacing: '.06em', textShadow: `0 0 8px ${color}60` }}>
                         {name.toUpperCase()}
                       </p>
                     )}
@@ -154,11 +154,12 @@ export default function GroupChat({ groupId, currentUserId, initialMessages }: G
           <div ref={bottomRef} />
         </div>
 
-        {/* Input area — borderless, flows over app bg */}
+        {/* Input area — inside slate container */}
         <div style={{
-          borderTop: '1px solid rgba(0,196,106,.12)',
-          paddingTop: 10,
+          borderTop: '1px solid rgba(255,255,255,.08)',
+          padding: '8px 12px',
           display: 'flex', gap: 7, alignItems: 'center',
+          background: 'rgba(0,0,0,.15)',
         }}>
           <input
             value={input}

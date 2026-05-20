@@ -213,20 +213,33 @@ button { font-family: inherit; cursor: pointer; }
   color: var(--bf-text-3); letter-spacing: .08em; text-transform: uppercase;
 }
 
-/* ── Chat bubbles (angular, dark) ───────────────────────── */
+/* ── Chat area ──────────────────────────────────────────── */
+.chat-area {
+  background: #1E2330;
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+/* ── Chat bubbles ───────────────────────────────────────── */
+/* MY messages: electric blue, white text */
 .chat-bubble-me {
-  background: linear-gradient(135deg, #001F5B 0%, #00297A 100%);
+  background: #1A56DB;
   border-radius: 14px 3px 14px 14px;
-  border: 1px solid rgba(0,80,200,.3);
+  box-shadow: 0 2px 8px rgba(26,86,219,.35);
 }
+.chat-bubble-me p { color: #fff !important; }
+
+/* THEIR messages: light opaque, dark text — max legibility */
 .chat-bubble-other {
-  background: var(--bf-surface-2);
+  background: #E8ECF4;
   border-radius: 3px 14px 14px 14px;
-  border: 1px solid var(--bf-border);
 }
+.chat-bubble-other p { color: #1A1D2E !important; }
+
+/* ── Chat input ─────────────────────────────────────────── */
 .chat-input-dark {
-  background: rgba(255,255,255,.05);
-  border: 1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
   color: var(--bf-text);
   border-radius: 6px;
   transition: border-color .2s, box-shadow .2s;
@@ -236,7 +249,7 @@ button { font-family: inherit; cursor: pointer; }
   border-color: var(--bf-green);
   box-shadow: 0 0 0 2px rgba(0,196,106,.15), 0 0 12px rgba(0,255,138,.1);
 }
-.chat-input-dark::placeholder { color: var(--bf-text-3); }
+.chat-input-dark::placeholder { color: rgba(255,255,255,.3); }
 
 /* ── Ranking card (dark) ────────────────────────────────── */
 .rank-card {
