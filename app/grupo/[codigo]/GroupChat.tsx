@@ -74,29 +74,25 @@ export default function GroupChat({ groupId, currentUserId, initialMessages }: G
 
   return (
     <div>
-      {/* ── Header */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(0,196,106,.4), transparent)' }} />
+      {/* ── Header — Sala de Pique */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+        <div style={{ flex: 1, height: 1, background: 'linear-gradient(90deg, rgba(0,196,106,.35), transparent)' }} />
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <div style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--bf-green)', boxShadow: '0 0 8px var(--bf-green)' }} />
-          <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 11, color: 'var(--bf-text-2)', letterSpacing: '.12em', textTransform: 'uppercase' }}>
-            Chat del grupo
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--bf-green)', boxShadow: '0 0 8px var(--bf-green)' }} />
+          <p style={{ fontFamily: 'var(--font-score)', fontSize: 14, color: 'var(--bf-green)', letterSpacing: '.16em' }}>
+            SALA DE PIQUE
           </p>
+          <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--bf-green)', boxShadow: '0 0 8px var(--bf-green)' }} />
         </div>
-        <div style={{ flex: 1, height: 1, background: 'linear-gradient(270deg, rgba(0,196,106,.4), transparent)' }} />
+        <div style={{ flex: 1, height: 1, background: 'linear-gradient(270deg, rgba(0,196,106,.35), transparent)' }} />
       </div>
 
-      {/* ── Chat box */}
-      <div style={{
-        background: 'var(--bf-surface)',
-        borderRadius: 16,
-        border: '1px solid var(--bf-border)',
-        overflow: 'hidden',
-      }}>
+      {/* ── Messages — open flow, no box */}
+      <div>
         {/* Messages */}
         <div style={{
           height: 260, overflowY: 'auto',
-          padding: '14px 12px 8px',
+          padding: '4px 2px 10px',
           display: 'flex', flexDirection: 'column', gap: 10,
         }}>
           {messages.length === 0 ? (
@@ -136,7 +132,7 @@ export default function GroupChat({ groupId, currentUserId, initialMessages }: G
 
                   <div style={{ maxWidth: '76%', display: 'flex', flexDirection: 'column', gap: 2, alignItems: isMe ? 'flex-end' : 'flex-start' }}>
                     {!isMe && !sameAuthor && (
-                      <p style={{ fontSize: 9, fontFamily: 'var(--font-display)', fontWeight: 700, color: 'var(--bf-text-3)', paddingLeft: 4, letterSpacing: '.04em' }}>
+                      <p style={{ fontSize: 9, fontFamily: 'var(--font-display)', fontWeight: 700, color: color, paddingLeft: 4, letterSpacing: '.04em', opacity: .85 }}>
                         {name.toUpperCase()}
                       </p>
                     )}
@@ -158,12 +154,11 @@ export default function GroupChat({ groupId, currentUserId, initialMessages }: G
           <div ref={bottomRef} />
         </div>
 
-        {/* Input area */}
+        {/* Input area — borderless, flows over app bg */}
         <div style={{
-          borderTop: '1px solid var(--bf-border)',
-          padding: '8px 10px',
+          borderTop: '1px solid rgba(0,196,106,.12)',
+          paddingTop: 10,
           display: 'flex', gap: 7, alignItems: 'center',
-          background: 'rgba(0,0,0,.2)',
         }}>
           <input
             value={input}

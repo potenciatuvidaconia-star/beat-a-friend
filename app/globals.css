@@ -25,11 +25,11 @@
   --bf-gold-soft:    rgba(255,186,0,.12);
 
   /* ── DARK theme neutrals (app-wide) */
-  --bf-bg:           #0A0A0C;          /* page background */
-  --bf-surface:      #111116;          /* card / panel */
-  --bf-surface-2:    #1A1A22;          /* raised card */
-  --bf-border:       rgba(255,255,255,.08);
-  --bf-divider:      rgba(255,255,255,.05);
+  --bf-bg:           #0B0F19;          /* deep midnight blue */
+  --bf-surface:      #0E1220;          /* card / panel — blue-tinted */
+  --bf-surface-2:    #141926;          /* raised card */
+  --bf-border:       rgba(255,255,255,.07);
+  --bf-divider:      rgba(255,255,255,.04);
 
   --bf-text:         #F0F0F8;
   --bf-text-2:       rgba(240,240,248,.55);
@@ -66,7 +66,11 @@
 html { -webkit-tap-highlight-color: transparent; }
 body {
   font-family: var(--font-body);
-  background: var(--bf-bg);
+  /* Stadium spotlight — subtle radial glow at top-center, dark edges */
+  background:
+    radial-gradient(ellipse 110% 50% at 50% -2%, #1B2A4A 0%, #0B0F19 55%, #070B13 100%);
+  background-attachment: fixed;
+  background-color: #0B0F19;
   color: var(--bf-text);
   -webkit-font-smoothing: antialiased;
 }
@@ -248,10 +252,11 @@ button { font-family: inherit; cursor: pointer; }
 
 /* ── Zona del Sótano ────────────────────────────────────── */
 .sotano-card {
-  background: linear-gradient(135deg, #0F0505 0%, #1A0808 100%);
-  border: 1.5px solid rgba(255,92,92,.3);
+  background: rgba(20, 4, 4, 0.75);
+  border: 1.5px solid rgba(255,60,60,.35);
   border-radius: var(--bf-r-lg);
-  box-shadow: 0 8px 32px rgba(255,40,40,.15), inset 0 1px 0 rgba(255,80,80,.08);
+  box-shadow: 0 0 24px rgba(255,40,40,.12), 0 8px 24px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,80,80,.06);
+  backdrop-filter: blur(4px);
 }
 .sotano-avatar {
   filter: grayscale(100%) brightness(0.7);

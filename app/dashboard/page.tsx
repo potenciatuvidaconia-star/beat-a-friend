@@ -221,7 +221,7 @@ export default async function DashboardPage() {
             display: 'flex', alignItems: 'center', gap: 16,
           }}>
             <div style={{ textAlign: 'center', flexShrink: 0 }}>
-              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 40, color: days <= 7 ? '#FF8C8C' : '#fff', lineHeight: 1 }}>
+              <p className="score score-xl" style={{ color: days <= 7 ? '#FF8C8C' : '#fff' }}>
                 {days}
               </p>
               <p style={{ fontSize: 10, color: 'rgba(255,255,255,.5)', fontFamily: 'var(--font-display)', fontWeight: 700, letterSpacing: '.06em' }}>
@@ -277,13 +277,15 @@ export default async function DashboardPage() {
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '14px 18px',
-                  background: 'linear-gradient(135deg, #001F5B 0%, #003087 100%)',
+                  background: 'rgba(0,20,60,0.5)',
+                  border: '1px solid rgba(0,80,200,.2)',
                   borderRadius: 18, textDecoration: 'none',
-                  boxShadow: '0 4px 16px rgba(0,31,91,.2)',
+                  boxShadow: '0 0 20px rgba(0,31,91,.15)',
+                  backdropFilter: 'blur(6px)',
                 }}
               >
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                  <h2 style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: '#fff', letterSpacing: '-0.01em' }}>
+                  <h2 style={{ fontFamily: 'var(--font-score)', fontSize: 26, color: '#fff', letterSpacing: '.04em', textTransform: 'uppercase', lineHeight: 1 }}>
                     {m.groups.name}
                   </h2>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -360,8 +362,8 @@ export default async function DashboardPage() {
                           </p>
                           <p style={{ fontSize: 11, color: 'rgba(255,255,255,.75)', marginTop: 1 }}>⚡ {apodoPrimero}</p>
                         </div>
-                        <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 24, color: '#fff' }}>
-                          {member.points}<span style={{ fontSize: 11, fontWeight: 600, opacity: .7, marginLeft: 2 }}>pts</span>
+                        <p className="score score-md neon-gold">
+                          {member.points}<span style={{ fontSize: 11, fontFamily: 'var(--font-display)', fontWeight: 600, opacity: .5, marginLeft: 2 }}>pts</span>
                         </p>
                       </div>
                     )

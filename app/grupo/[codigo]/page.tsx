@@ -98,8 +98,8 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
                 </span>
               </div>
               <h1 style={{
-                fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 30,
-                color: '#fff', letterSpacing: '-0.02em', lineHeight: 1.1,
+                fontFamily: 'var(--font-score)', fontSize: 42,
+                color: '#fff', letterSpacing: '.03em', lineHeight: 1, textTransform: 'uppercase',
               }}>
                 {group.name}
               </h1>
@@ -253,33 +253,36 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
 
               if (isFirst) {
                 return (
-                  <div key={m.id} className="shimmer-gold" style={{
+                  <div key={m.id} style={{
                     borderRadius: 18, padding: '16px 18px',
-                    boxShadow: '0 8px 32px rgba(255,186,0,.45)',
+                    background: 'rgba(255,186,0,.04)',
+                    border: '1.5px solid rgba(255,186,0,.5)',
+                    boxShadow: '0 0 28px rgba(255,186,0,.1), 0 4px 20px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,186,0,.08)',
                     display: 'flex', alignItems: 'center', gap: 14,
+                    backdropFilter: 'blur(4px)',
                   }}>
                     <div style={{ position: 'relative', flexShrink: 0 }}>
-                      <AvatarCircle size={52} border="3px solid rgba(255,255,255,.7)" />
+                      <AvatarCircle size={52} border="2.5px solid rgba(255,186,0,.7)" />
                       <div style={{
                         position: 'absolute', bottom: -4, right: -4,
                         width: 22, height: 22, borderRadius: '50%',
-                        background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 11, color: '#E6A300',
-                        boxShadow: '0 2px 8px rgba(0,0,0,.3)',
+                        background: '#FFBA00', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 10, color: '#1A0E00',
+                        boxShadow: '0 2px 8px rgba(255,186,0,.5)',
                       }}>1°</div>
                     </div>
                     <div style={{ flex: 1, minWidth: 0 }}>
-                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: '#fff', lineHeight: 1 }}>
+                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 17, color: '#FFDA66', lineHeight: 1 }}>
                         {displayName}
-                        {isMe && <span style={{ fontSize: 12, opacity: .7, marginLeft: 6 }}>(tú)</span>}
+                        {isMe && <span style={{ fontSize: 12, opacity: .6, marginLeft: 6 }}>(tú)</span>}
                       </p>
-                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: 'rgba(255,255,255,.8)', marginTop: 3 }}>
+                      <p style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: 12, color: 'rgba(255,210,100,.6)', marginTop: 3 }}>
                         ⚡ {apodoPrimero}
                       </p>
                     </div>
                     <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                      <p className="score score-lg" style={{ color: '#fff' }}>{m.points}</p>
-                      <p style={{ fontSize: 10, color: 'rgba(255,255,255,.6)', letterSpacing: '.08em', textTransform: 'uppercase', marginTop: 1 }}>pts</p>
+                      <p className="score score-lg neon-gold">{m.points}</p>
+                      <p style={{ fontSize: 10, color: 'rgba(255,186,0,.45)', letterSpacing: '.08em', textTransform: 'uppercase', marginTop: 1 }}>pts</p>
                     </div>
                   </div>
                 )
@@ -360,10 +363,11 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
                       </div>
                     )}
                     <div style={{
-                      background: 'rgba(255,40,40,.06)',
-                      border: '1px solid rgba(255,92,92,.2)',
+                      background: 'rgba(20,4,4,0.5)',
+                      border: '1px solid rgba(255,60,60,.18)',
                       borderRadius: 14, padding: '11px 14px',
                       display: 'flex', alignItems: 'center', gap: 12,
+                      backdropFilter: 'blur(4px)',
                     }}>
                       <div style={{ position: 'relative', flexShrink: 0 }}>
                         <div style={{ filter: 'grayscale(60%) brightness(0.8)' }}>
@@ -406,10 +410,11 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
                     </div>
                   )}
                   <div style={{
-                    background: isMe ? 'rgba(0,196,106,.08)' : 'var(--bf-surface)',
-                    border: `1px solid ${isMe ? 'rgba(0,196,106,.2)' : 'var(--bf-border)'}`,
+                    background: isMe ? 'rgba(0,196,106,.06)' : 'rgba(14,18,30,0.55)',
+                    border: `1px solid ${isMe ? 'rgba(0,196,106,.22)' : 'rgba(255,255,255,.06)'}`,
                     borderRadius: 14, padding: '11px 14px',
                     display: 'flex', alignItems: 'center', gap: 12,
+                    backdropFilter: 'blur(4px)',
                   }}>
                     <div style={{ position: 'relative', flexShrink: 0 }}>
                       <AvatarCircle size={38} border="1px solid var(--bf-border)" />
@@ -465,58 +470,30 @@ export default async function GrupoPage({ params }: { params: Promise<{ codigo: 
           Ver partidos y predecir
         </Link>
 
-        {/* ── TROFEO / DIPLOMA ──────────────────────────── */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-          <Link
-            href={`/grupo/${codigo}/trofeo`}
-            style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-              padding: '20px 12px',
-              background: 'linear-gradient(145deg, #FFBA00 0%, #E6A300 100%)',
-              borderRadius: 20, textDecoration: 'none',
-              boxShadow: '0 6px 20px rgba(255,186,0,.3)',
-            }}
-          >
-            <div style={{
-              width: 52, height: 52, borderRadius: '50%',
-              background: 'rgba(255,255,255,.25)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-                <path d="M13 2.5l2.6 5.3 5.8.8-4.2 4.1 1 5.8-5.2-2.7-5.2 2.7 1-5.8-4.2-4.1 5.8-.8L13 2.5z" fill="white"/>
-                <path d="M9.5 21h7M13 17v4" stroke="white" strokeWidth="1.8" strokeLinecap="round"/>
-              </svg>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 15, color: '#fff' }}>Trofeo</p>
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,.75)', marginTop: 2 }}>{apodoPrimero}</p>
+        {/* ── TROFEO / DIPLOMA — compact badges ────────────── */}
+        <div style={{ display: 'flex', gap: 8 }}>
+          <Link href={`/grupo/${codigo}/trofeo`} style={{
+            flex: 1, display: 'flex', alignItems: 'center', gap: 10,
+            padding: '10px 14px', borderRadius: 12, textDecoration: 'none',
+            background: 'rgba(255,186,0,.05)',
+            border: '1px solid rgba(255,186,0,.22)',
+          }}>
+            <span style={{ fontSize: 20, flexShrink: 0 }}>🏆</span>
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: '#FFBA00' }}>Trofeo</p>
+              <p style={{ fontSize: 10, color: 'rgba(255,255,255,.3)', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{apodoPrimero}</p>
             </div>
           </Link>
-
-          <Link
-            href={`/grupo/${codigo}/diploma`}
-            style={{
-              display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 10,
-              padding: '20px 12px',
-              background: 'linear-gradient(145deg, #FF5C5C 0%, #E03E3E 100%)',
-              borderRadius: 20, textDecoration: 'none',
-              boxShadow: '0 6px 20px rgba(255,92,92,.25)',
-            }}
-          >
-            <div style={{
-              width: 52, height: 52, borderRadius: '50%',
-              background: 'rgba(255,255,255,.25)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-            }}>
-              <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
-                <path d="M13 3C7.5 3 3 7.5 3 13s4.5 10 10 10 10-4.5 10-10S18.5 3 13 3z" stroke="white" strokeWidth="1.8"/>
-                <path d="M13 8v7" stroke="white" strokeWidth="2.2" strokeLinecap="round"/>
-                <circle cx="13" cy="18" r="1.2" fill="white"/>
-              </svg>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 15, color: '#fff' }}>Diploma</p>
-              <p style={{ fontSize: 11, color: 'rgba(255,255,255,.75)', marginTop: 2 }}>{apodoUltimo}</p>
+          <Link href={`/grupo/${codigo}/diploma`} style={{
+            flex: 1, display: 'flex', alignItems: 'center', gap: 10,
+            padding: '10px 14px', borderRadius: 12, textDecoration: 'none',
+            background: 'rgba(255,92,92,.05)',
+            border: '1px solid rgba(255,92,92,.22)',
+          }}>
+            <span style={{ fontSize: 20, flexShrink: 0 }}>📜</span>
+            <div style={{ minWidth: 0 }}>
+              <p style={{ fontFamily: 'var(--font-display)', fontWeight: 800, fontSize: 13, color: '#FF8C8C' }}>Diploma</p>
+              <p style={{ fontSize: 10, color: 'rgba(255,255,255,.3)', marginTop: 1, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{apodoUltimo}</p>
             </div>
           </Link>
         </div>
